@@ -1,3 +1,4 @@
+
 // Song section types
 export type SectionType = string;
 
@@ -38,14 +39,14 @@ export enum LayoutType {
   TWO_COLUMN = "two-column"
 }
 
-// Default section colors - updated for circle backgrounds
+// Default section colors - updated for circle borders with bold, highly saturated colors
 export const defaultSectionColors: Record<string, string> = {
-  "I": "#D3E4FD",   // Soft Blue for Intro
-  "V": "#F2FCE2",   // Soft Green for Verse 
-  "C": "#FDE1D3",   // Soft Peach for Chorus
-  "B": "#FEC6A1",   // Soft Orange for Bridge
-  "P": "#FFDEE2",   // Soft Pink for Pre-Chorus
-  "R": "#E5DEFF",   // Soft Purple for Refrain
-  "O": "#FEF7CD",   // Soft Yellow for Outro
-  "default": "#F1F0FB" // Soft Gray for other sections
+  "I": "#0EA5E9",  // Ocean Blue for Intro
+  "V": "#8B5CF6",  // Vivid Purple for Verse
+  "C": "#F97316",  // Bright Orange for Chorus
+  "B": "#EA384C",  // Red for Bridge
+  "P": "#D946EF",  // Magenta Pink for Pre-Chorus
+  "R": "#10B981",  // Emerald Green for Refrain/Repeat
+  "O": "#F59E0B",  // Amber for Outro
+  "default": "#6B7280" // Slate Gray for other sections
 };
