@@ -7,7 +7,7 @@ interface SectionSequenceProps {
 }
 
 const SectionSequence: React.FC<SectionSequenceProps> = ({ sequence }) => {
-  const getCircleColor = (sectionType: string) => {
+  const getCircleBorderColor = (sectionType: string) => {
     const baseType = sectionType.charAt(0);
     return defaultSectionColors[baseType] || defaultSectionColors.default;
   };
@@ -17,8 +17,10 @@ const SectionSequence: React.FC<SectionSequenceProps> = ({ sequence }) => {
       {sequence.map((section, index) => (
         <div
           key={index}
-          className="w-8 h-8 rounded-full border border-chart-sequence flex items-center justify-center font-medium text-sm text-chart-sequence"
-          style={{ backgroundColor: getCircleColor(section) }}
+          className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-medium text-sm text-chart-sequence"
+          style={{ 
+            border: `2px solid ${getCircleBorderColor(section)}` 
+          }}
           title={section}
         >
           {section}
