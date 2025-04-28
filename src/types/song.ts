@@ -38,13 +38,14 @@ export enum LayoutType {
   TWO_COLUMN = "two-column"
 }
 
-// Default section colors
+// Default section colors - updated for circle backgrounds
 export const defaultSectionColors: Record<string, string> = {
-  "I": "#E5DEFF",   // Soft Purple for Intro
-  "V": "#D3E4FD",   // Soft Blue for Verse
+  "I": "#D3E4FD",   // Soft Blue for Intro
+  "V": "#F2FCE2",   // Soft Green for Verse 
   "C": "#FDE1D3",   // Soft Peach for Chorus
   "B": "#FEC6A1",   // Soft Orange for Bridge
-  "P": "#F2FCE2",   // Soft Green for Pre-Chorus
-  "O": "#FFDEE2",   // Soft Pink for Outro
+  "P": "#FFDEE2",   // Soft Pink for Pre-Chorus
+  "R": "#E5DEFF",   // Soft Purple for Refrain
+  "O": "#FEF7CD",   // Soft Yellow for Outro
   "default": "#F1F0FB" // Soft Gray for other sections
 };

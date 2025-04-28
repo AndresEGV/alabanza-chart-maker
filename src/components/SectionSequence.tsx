@@ -1,18 +1,24 @@
 
 import React from "react";
-import { SectionType } from "../types/song";
+import { SectionType, defaultSectionColors } from "../types/song";
 
 interface SectionSequenceProps {
   sequence: SectionType[];
 }
 
 const SectionSequence: React.FC<SectionSequenceProps> = ({ sequence }) => {
+  const getCircleColor = (sectionType: string) => {
+    const baseType = sectionType.charAt(0);
+    return defaultSectionColors[baseType] || defaultSectionColors.default;
+  };
+
   return (
     <div className="flex flex-wrap gap-2 my-4">
       {sequence.map((section, index) => (
         <div
           key={index}
-          className="w-8 h-8 rounded-full border border-chart-sequence text-chart-sequence flex items-center justify-center font-medium text-sm"
+          className="w-8 h-8 rounded-full border border-chart-sequence flex items-center justify-center font-medium text-sm text-chart-sequence"
+          style={{ backgroundColor: getCircleColor(section) }}
           title={section}
         >
           {section}
