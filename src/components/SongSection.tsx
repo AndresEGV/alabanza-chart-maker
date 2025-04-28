@@ -1,6 +1,6 @@
 
 import React from "react";
-import { SongSection as SongSectionType } from "../types/song";
+import { SongSection as SongSectionType, defaultSectionColors } from "../types/song";
 import ChordLine from "./ChordLine";
 
 interface SongSectionProps {
@@ -8,8 +8,15 @@ interface SongSectionProps {
 }
 
 const SongSection: React.FC<SongSectionProps> = ({ section }) => {
+  // Determine section color based on first character (e.g., 'V' from 'V1')
+  const baseType = section.type.charAt(0);
+  const backgroundColor = section.color || defaultSectionColors[baseType] || defaultSectionColors.default;
+
   return (
-    <div className="relative border border-chart-border rounded-md mb-4 p-4">
+    <div 
+      className="relative border border-chart-border rounded-md mb-4 p-4"
+      style={{ backgroundColor }}
+    >
       <div className="flex items-start mb-2">
         <div className="flex-shrink-0 -mt-7 -ml-7 bg-white p-1">
           <div className="w-10 h-10 rounded-full border border-chart-sequence text-chart-sequence flex items-center justify-center font-semibold">

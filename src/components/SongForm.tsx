@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { LayoutType, SectionType, SongData, SongSection as SongSectionType } from "../types/song";
 import { Button } from "@/components/ui/button";
@@ -162,6 +161,41 @@ const SongForm: React.FC<SongFormProps> = ({
     onSongUpdate(updatedSong);
   };
 
+  const [newNote, setNewNote] = useState({ text: "", position: "left" as "left" | "right" });
+
+  const handleAddNote = () => {
+    if (!newNote.text) return;
+    
+    setSong(prev => ({
+      ...prev,
+      sections: {
+        ...prev.sections,
+        [activeSectionTab]: {
+          ...prev.sections[activeSectionTab],
+          notes: [
+            ...(prev.sections[activeSectionTab].notes || []),
+            { text: newNote.text, position: newNote.position }
+          ]
+        }
+      }
+    }));
+    
+    setNewNote({ text: "", position: "left" });
+  };
+
+  const handleDeleteNote = (noteIndex: number) => {
+    setSong(prev => ({
+      ...prev,
+      sections: {
+        ...prev.sections,
+        [activeSectionTab]: {
+          ...prev.sections[activeSectionTab],
+          notes: prev.sections[activeSectionTab].notes?.filter((_, i) => i !== noteIndex)
+        }
+      }
+    }));
+  };
+
   return (
     <Card className="w-full">
       <CardContent className="p-6">
@@ -273,24 +307,68 @@ const SongForm: React.FC<SongFormProps> = ({
               ))}
             </div>
             
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="sectionText">Acordes y Letra</Label>
-                <div className="flex items-center text-xs text-muted-foreground">
-                  <Info className="h-3 w-3 mr-1" />
-                  Escribir acordes en una línea y letra en la siguiente
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Notas de sección</Label>
+                <div className="flex gap-2">
+                  <select 
+                    className="border rounded p-2"
+                    value={newNote.position}
+                    onChange={(e) => setNewNote(prev => ({ ...prev, position: e.target.value as "left" | "right" }))}
+                  >
+                    <option value="left">Izquierda</option>
+                    <option value="right">Derecha</option>
+                  </select>
+                  <Input
+                    placeholder="Agregar nota musical o indicación..."
+                    value={newNote.text}
+                    onChange={(e) => setNewNote(prev => ({ ...prev, text: e.target.value }))}
+                  />
+                  <Button onClick={handleAddNote} disabled={!newNote.text}>
+                    Agregar Nota
+                  </Button>
                 </div>
               </div>
+
+              {song.sections[activeSectionTab]?.notes && (
+                <div className="space-y-2">
+                  <Label>Notas actuales:</Label>
+                  <div className="space-y-2">
+                    {song.sections[activeSectionTab].notes.map((note, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <span className="text-sm">{note.position === "left" ? "Izquierda" : "Derecha"}: {note.text}</span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteNote(index)}
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               
-              <ScrollArea className="h-96 border rounded-md p-4">
-                <Textarea
-                  id="sectionText"
-                  className="min-h-[300px] font-mono"
-                  value={sectionText[activeSectionTab] || ""}
-                  onChange={handleSectionTextChange}
-                  placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle`}
-                />
-              </ScrollArea>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="sectionText">Acordes y Letra</Label>
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <Info className="h-3 w-3 mr-1" />
+                    Escribir acordes en una línea y letra en la siguiente
+                  </div>
+                </div>
+                
+                <ScrollArea className="h-96 border rounded-md p-4">
+                  <Textarea
+                    id="sectionText"
+                    className="min-h-[300px] font-mono"
+                    value={sectionText[activeSectionTab] || ""}
+                    onChange={handleSectionTextChange}
+                    placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle`}
+                  />
+                </ScrollArea>
+              </div>
             </div>
           </TabsContent>
           
@@ -410,4 +488,3 @@ const SongForm: React.FC<SongFormProps> = ({
 };
 
 export default SongForm;
-
