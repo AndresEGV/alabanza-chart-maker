@@ -9,7 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { parseChordLyricTextInput } from "@/utils/songUtils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertCircle, Info } from "lucide-react";
+import { AlertCircle, Info, Plus, Trash } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 interface SongFormProps {
   initialSong: SongData;
@@ -30,6 +37,9 @@ const SongForm: React.FC<SongFormProps> = ({
   const [sequenceInput, setSequenceInput] = useState<string>(
     initialSong.sectionSequence.join(" ")
   );
+  const [newSectionDialogOpen, setNewSectionDialogOpen] = useState(false);
+  const [newSectionCode, setNewSectionCode] = useState("");
+  const [newSectionTitle, setNewSectionTitle] = useState("");
 
   // Initialize section text from song data
   React.useEffect(() => {
@@ -65,6 +75,70 @@ const SongForm: React.FC<SongFormProps> = ({
       ...prev,
       sectionSequence: sequence
     }));
+  };
+
+  const handleAddSection = () => {
+    if (!newSectionCode || !newSectionTitle) return;
+    
+    // Add the new section type to the song sections
+    const sectionCode = newSectionCode as SectionType;
+    
+    setSong(prev => ({
+      ...prev,
+      sections: {
+        ...prev.sections,
+        [sectionCode]: {
+          type: sectionCode,
+          title: newSectionTitle,
+          lines: [{ chords: "", lyrics: "" }]
+        }
+      }
+    }));
+    
+    // Add empty text for the new section
+    setSectionText(prev => ({
+      ...prev,
+      [sectionCode]: ""
+    }));
+    
+    // Set the new section as active
+    setActiveSectionTab(sectionCode);
+    
+    // Reset form fields
+    setNewSectionCode("");
+    setNewSectionTitle("");
+    setNewSectionDialogOpen(false);
+  };
+
+  const handleDeleteSection = (sectionType: SectionType) => {
+    // Cannot delete if it's the only section
+    if (Object.keys(song.sections).length <= 1) return;
+    
+    // Create a new sections object without the deleted section
+    const { [sectionType]: removedSection, ...remainingSections } = song.sections;
+    
+    // Update the sequence by removing the deleted section
+    const updatedSequence = song.sectionSequence.filter(type => type !== sectionType);
+    
+    // Set a new active section if the current one is being deleted
+    if (activeSectionTab === sectionType) {
+      const firstRemainingSection = Object.keys(remainingSections)[0] as SectionType;
+      setActiveSectionTab(firstRemainingSection);
+    }
+    
+    // Update the song state
+    setSong(prev => ({
+      ...prev,
+      sections: remainingSections,
+      sectionSequence: updatedSequence
+    }));
+    
+    // Update the sequence input
+    setSequenceInput(updatedSequence.join(" "));
+    
+    // Remove the section from the text state
+    const { [sectionType]: removedText, ...remainingText } = sectionText;
+    setSectionText(remainingText as Record<SectionType, string>);
   };
 
   const handleGenerateChart = () => {
@@ -164,16 +238,38 @@ const SongForm: React.FC<SongFormProps> = ({
           </TabsContent>
           
           <TabsContent value="sections" className="space-y-4">
+            <div className="flex justify-between items-center mb-2">
+              <Label className="text-lg font-semibold">Secciones disponibles</Label>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setNewSectionDialogOpen(true)}
+                className="flex items-center"
+              >
+                <Plus className="w-4 h-4 mr-1" /> Agregar sección
+              </Button>
+            </div>
+            
             <div className="flex overflow-x-auto py-2 mb-2 gap-1">
-              {Object.keys(song.sections).map((type) => (
-                <Button
-                  key={type}
-                  variant={activeSectionTab === type ? "default" : "outline"}
-                  onClick={() => setActiveSectionTab(type as SectionType)}
-                  className="flex-shrink-0"
-                >
-                  {type}
-                </Button>
+              {Object.entries(song.sections).map(([type, section]) => (
+                <div key={type} className="flex-shrink-0 flex items-center">
+                  <Button
+                    variant={activeSectionTab === type ? "default" : "outline"}
+                    onClick={() => setActiveSectionTab(type as SectionType)}
+                    className="flex-shrink-0"
+                  >
+                    {type} - {section.title}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 ml-1"
+                    onClick={() => handleDeleteSection(type as SectionType)}
+                    disabled={Object.keys(song.sections).length <= 1}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
               ))}
             </div>
             
@@ -258,9 +354,60 @@ const SongForm: React.FC<SongFormProps> = ({
         <div className="mt-6 flex justify-end">
           <Button onClick={handleGenerateChart}>Generar Guía</Button>
         </div>
+
+        {/* Dialog for adding a new section */}
+        <Dialog open={newSectionDialogOpen} onOpenChange={setNewSectionDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Agregar nueva sección</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="sectionCode">Código de sección</Label>
+                <div className="text-xs text-muted-foreground mb-1">
+                  Código corto (1-4 caracteres) como "V1", "C2", "B", etc.
+                </div>
+                <Input
+                  id="sectionCode"
+                  value={newSectionCode}
+                  onChange={(e) => setNewSectionCode(e.target.value)}
+                  placeholder="Ej: V3, Bs, PC"
+                  maxLength={4}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="sectionTitle">Título de sección</Label>
+                <div className="text-xs text-muted-foreground mb-1">
+                  Nombre completo como "VERSO 3", "PUENTE", etc.
+                </div>
+                <Input
+                  id="sectionTitle"
+                  value={newSectionTitle}
+                  onChange={(e) => setNewSectionTitle(e.target.value)}
+                  placeholder="Ej: VERSO 3, PUENTE, PRE-CORO"
+                />
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setNewSectionDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleAddSection}
+                disabled={!newSectionCode || !newSectionTitle}
+              >
+                Agregar sección
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
 };
 
 export default SongForm;
+

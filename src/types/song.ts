@@ -1,8 +1,6 @@
 
 // Song section types
-export type SectionType = 
-  | "I" | "V1" | "V2" | "V3" | "V4" 
-  | "C1" | "C2" | "Pr" | "Pr2" | "Rf" | "Rp" | "F";
+export type SectionType = string;
 
 export interface ChordLyricLine {
   chords: string;

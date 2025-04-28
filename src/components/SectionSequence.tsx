@@ -13,6 +13,7 @@ const SectionSequence: React.FC<SectionSequenceProps> = ({ sequence }) => {
         <div
           key={index}
           className="w-8 h-8 rounded-full border border-chart-sequence text-chart-sequence flex items-center justify-center font-medium text-sm"
+          title={section}
         >
           {section}
         </div>
