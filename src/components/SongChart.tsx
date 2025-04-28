@@ -1,0 +1,96 @@
+
+import React, { useState } from "react";
+import { LayoutType, SectionType, SongData } from "../types/song";
+import SongSection from "./SongSection";
+import SectionSequence from "./SectionSequence";
+
+interface SongChartProps {
+  song: SongData;
+  layout?: LayoutType;
+}
+
+const SongChart: React.FC<SongChartProps> = ({
+  song,
+  layout = LayoutType.TWO_COLUMN,
+}) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const maxPage = song.totalPages || 1;
+
+  // Function to organize sections for layout display
+  const organizeSections = () => {
+    // Get the sections in sequence order
+    const orderedSections = song.sectionSequence
+      .map((type) => song.sections[type])
+      .filter((section) => {
+        // Only include sections that have content
+        return section.lines.some((line) => line.chords || line.lyrics);
+      });
+
+    if (layout === LayoutType.SINGLE_COLUMN) {
+      return { 
+        leftColumn: orderedSections,
+        rightColumn: []
+      };
+    } else {
+      // Split into two columns
+      const midpoint = Math.ceil(orderedSections.length / 2);
+      return {
+        leftColumn: orderedSections.slice(0, midpoint),
+        rightColumn: orderedSections.slice(midpoint),
+      };
+    }
+  };
+
+  const { leftColumn, rightColumn } = organizeSections();
+
+  return (
+    <div className={`songchart bg-white text-black max-w-5xl mx-auto p-8 print:p-4 ${layout === LayoutType.SINGLE_COLUMN ? 'single-column' : 'two-column'}`}>
+      {/* Header */}
+      <div className="mb-6 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold">{song.title}</h1>
+          <div className="text-lg">{song.artist}</div>
+        </div>
+        <div className="text-right">
+          <div>Página: {currentPage}/{maxPage}</div>
+          <div>Tono: {song.key}</div>
+          <div>Tempo: {song.tempo}</div>
+          <div>Time: {song.timeSignature}</div>
+        </div>
+      </div>
+
+      {/* Section Sequence */}
+      <SectionSequence sequence={song.sectionSequence} />
+
+      {/* Song Content */}
+      <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8' : 'grid-cols-1'}`}>
+        <div>
+          {leftColumn.map((section) => (
+            <SongSection key={section.type} section={section} />
+          ))}
+        </div>
+        {layout === LayoutType.TWO_COLUMN && rightColumn.length > 0 && (
+          <div>
+            {rightColumn.map((section) => (
+              <SongSection key={section.type} section={section} />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      {(song.composer || song.copyright) && (
+        <div className="mt-8 text-sm text-gray-600 flex justify-between">
+          <div>
+            {song.composer && <span>Compositores: {song.composer}</span>}
+          </div>
+          <div>
+            {song.copyright && <span>{song.copyright}</span>}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SongChart;
