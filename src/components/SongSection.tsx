@@ -27,7 +27,7 @@ const SongSection: React.FC<SongSectionProps> = ({ section }) => {
       <div className="flex items-start mb-2">
         <div className="flex-shrink-0 -mt-7 -ml-7">
           <div 
-            className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-chart-sequence"
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-black"
             style={{ 
               border: `2px solid ${circleBorderColor}` 
             }}

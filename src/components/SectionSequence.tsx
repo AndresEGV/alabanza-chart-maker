@@ -23,7 +23,7 @@ const SectionSequence: React.FC<SectionSequenceProps> = ({ sequence }) => {
       {sequence.map((section, index) => (
         <div
           key={index}
-          className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-sm text-chart-sequence"
+          className="w-8 h-8 rounded-full bg-white flex items-center justify-center font-bold text-sm text-black"
           style={{ 
             border: `2px solid ${getCircleBorderColor(section)}` 
           }}
