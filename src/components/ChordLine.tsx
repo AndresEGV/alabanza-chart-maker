@@ -11,7 +11,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
   return (
     <div className="mb-1 relative">
       {showChords && line.chords && (
-        <div className="text-sm font-medium leading-tight mb-0">
+        <div className="text-sm font-bold text-black leading-tight mb-0">
           {line.chords}
         </div>
       )}
