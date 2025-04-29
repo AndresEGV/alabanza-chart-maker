@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LayoutType, SectionType, SongData } from "../types/song";
 import SongSection from "./SongSection";
 import SectionSequence from "./SectionSequence";
@@ -7,11 +7,13 @@ import SectionSequence from "./SectionSequence";
 interface SongChartProps {
   song: SongData;
   layout?: LayoutType;
+  showChords?: boolean;
 }
 
 const SongChart: React.FC<SongChartProps> = ({
   song,
   layout = LayoutType.TWO_COLUMN,
+  showChords = true,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const maxPage = song.totalPages || 1;
@@ -66,13 +68,13 @@ const SongChart: React.FC<SongChartProps> = ({
       <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8' : 'grid-cols-1'}`}>
         <div>
           {leftColumn.map((section) => (
-            <SongSection key={section.type} section={section} />
+            <SongSection key={section.type} section={section} showChords={showChords} />
           ))}
         </div>
         {layout === LayoutType.TWO_COLUMN && rightColumn.length > 0 && (
           <div>
             {rightColumn.map((section) => (
-              <SongSection key={section.type} section={section} />
+              <SongSection key={section.type} section={section} showChords={showChords} />
             ))}
           </div>
         )}

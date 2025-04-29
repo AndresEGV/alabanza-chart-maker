@@ -5,9 +5,13 @@ import ChordLine from "./ChordLine";
 
 interface SongSectionProps {
   section: SongSectionType;
+  showChords?: boolean;
 }
 
-const SongSection: React.FC<SongSectionProps> = ({ section }) => {
+const SongSection: React.FC<SongSectionProps> = ({ 
+  section,
+  showChords = true 
+}) => {
   // Determine section color based on exact section type first, then fall back to first character
   const getCircleBorderColor = (sectionType: string) => {
     // Check for full section type match first (e.g., "Rf", "Rp")
@@ -54,7 +58,7 @@ const SongSection: React.FC<SongSectionProps> = ({ section }) => {
       </div>
       <div>
         {section.lines.map((line, index) => (
-          <ChordLine key={index} line={line} />
+          <ChordLine key={index} line={line} showChords={showChords} />
         ))}
       </div>
     </div>

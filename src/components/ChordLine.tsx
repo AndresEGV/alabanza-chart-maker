@@ -4,12 +4,13 @@ import { ChordLyricLine } from "../types/song";
 
 interface ChordLineProps {
   line: ChordLyricLine;
+  showChords?: boolean;
 }
 
-const ChordLine: React.FC<ChordLineProps> = ({ line }) => {
+const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
   return (
     <div className="mb-1 relative">
-      {line.chords && (
+      {showChords && line.chords && (
         <div className="text-sm font-medium leading-tight mb-0">
           {line.chords}
         </div>
