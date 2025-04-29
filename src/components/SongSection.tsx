@@ -8,16 +8,26 @@ interface SongSectionProps {
 }
 
 const SongSection: React.FC<SongSectionProps> = ({ section }) => {
-  // Determine section color based on first character (e.g., 'V' from 'V1')
-  const baseType = section.type.charAt(0);
-  const circleBorderColor = section.color || defaultSectionColors[baseType] || defaultSectionColors.default;
+  // Determine section color based on exact section type first, then fall back to first character
+  const getCircleBorderColor = (sectionType: string) => {
+    // Check for full section type match first (e.g., "Rf", "Rp")
+    if (defaultSectionColors[sectionType]) {
+      return defaultSectionColors[sectionType];
+    }
+    
+    // Fall back to base type (first character) if no exact match
+    const baseType = sectionType.charAt(0);
+    return defaultSectionColors[baseType] || defaultSectionColors.default;
+  };
+
+  const circleBorderColor = section.color || getCircleBorderColor(section.type);
 
   return (
     <div className="relative border border-chart-border rounded-md mb-4 p-4 bg-white">
       <div className="flex items-start mb-2">
         <div className="flex-shrink-0 -mt-7 -ml-7">
           <div 
-            className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-semibold text-chart-sequence"
+            className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-bold text-chart-sequence"
             style={{ 
               border: `2px solid ${circleBorderColor}` 
             }}

@@ -39,14 +39,17 @@ export enum LayoutType {
   TWO_COLUMN = "two-column"
 }
 
-// Default section colors - updated for circle borders with bold, highly saturated colors
+// Default section colors - unique bold, highly saturated colors for each section type
 export const defaultSectionColors: Record<string, string> = {
   "I": "#0EA5E9",  // Ocean Blue for Intro
   "V": "#8B5CF6",  // Vivid Purple for Verse
   "C": "#F97316",  // Bright Orange for Chorus
   "B": "#EA384C",  // Red for Bridge
   "P": "#D946EF",  // Magenta Pink for Pre-Chorus
-  "R": "#10B981",  // Emerald Green for Refrain/Repeat
+  "R": "#10B981",  // Emerald Green for Refrain
+  "Rf": "#4338CA", // Indigo for Reflection
+  "Rp": "#059669", // Teal Green for Repeat
   "O": "#F59E0B",  // Amber for Outro
+  "F": "#6366F1",  // Blue for Final
   "default": "#6B7280" // Slate Gray for other sections
 };
