@@ -16,7 +16,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
         </div>
       )}
       {line.lyrics && (
-        <div className="text-base leading-tight">{line.lyrics}</div>
+        <div className="text-base font-normal text-black leading-tight">{line.lyrics}</div>
       )}
     </div>
   );
