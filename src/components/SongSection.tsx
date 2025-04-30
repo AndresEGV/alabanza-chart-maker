@@ -56,7 +56,7 @@ const SongSection: React.FC<SongSectionProps> = ({
           </div>
         )}
       </div>
-      <div>
+      <div className="font-mono">
         {section.lines.map((line, index) => (
           <ChordLine key={index} line={line} showChords={showChords} />
         ))}
