@@ -19,7 +19,8 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
         style={{ 
           whiteSpace: "pre",
           fontFamily: "monospace", 
-          letterSpacing: "0"
+          letterSpacing: "0",
+          fontWeight: 700 // Ensure chords are bold
         }}
       >
         {line.chords}
@@ -32,11 +33,12 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
       {showChords && line.chords && processChordLine()}
       {line.lyrics && (
         <div 
-          className="text-base font-normal text-black leading-tight"
+          className="text-base text-black leading-tight"
           style={{ 
             whiteSpace: "pre",
             fontFamily: "monospace",
-            letterSpacing: "0" 
+            letterSpacing: "0",
+            fontWeight: 400 // Ensure lyrics are regular weight
           }}
         >
           {line.lyrics}
