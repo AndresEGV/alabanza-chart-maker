@@ -2,9 +2,15 @@
 // Song section types
 export type SectionType = string;
 
+export interface ChordPosition {
+  chord: string;
+  position: number; // character position in the lyrics where chord should appear
+}
+
 export interface ChordLyricLine {
-  chords: string;
+  chords: string; // Original chord input (for backward compatibility)
   lyrics: string;
+  chordPositions?: ChordPosition[]; // New field for explicit chord positioning
 }
 
 export interface SectionNote {

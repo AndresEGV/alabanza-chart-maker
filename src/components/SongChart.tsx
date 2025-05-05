@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { LayoutType, SectionType, SongData } from "../types/song";
 import SongSection from "./SongSection";
@@ -47,7 +46,8 @@ const SongChart: React.FC<SongChartProps> = ({
 
   return (
     <div className={`songchart bg-white text-black max-w-5xl mx-auto p-8 print:p-4 ${layout === LayoutType.SINGLE_COLUMN ? 'single-column' : 'two-column'}`}>
-      <style jsx="true">{`
+      <style>
+        {`
         .chord-lyric-container {
           position: relative;
         }
@@ -55,7 +55,8 @@ const SongChart: React.FC<SongChartProps> = ({
           font-family: monospace;
           letter-spacing: 0;
         }
-      `}</style>
+        `}
+      </style>
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>

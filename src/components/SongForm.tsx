@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LayoutType, SectionType, SongData, SongSection as SongSectionType } from "../types/song";
+import { LayoutType, SectionType, SongData } from "../types/song";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -355,7 +355,7 @@ const SongForm: React.FC<SongFormProps> = ({
                   <Label htmlFor="sectionText">Acordes y Letra</Label>
                   <div className="flex items-center text-xs text-muted-foreground">
                     <Info className="h-3 w-3 mr-1" />
-                    Escribir acordes en una línea y letra en la siguiente
+                    <span>Escribir acordes en una línea y letra en la siguiente, o usar [acorde]palabra para posicionamiento exacto</span>
                   </div>
                 </div>
                 
@@ -365,9 +365,15 @@ const SongForm: React.FC<SongFormProps> = ({
                     className="min-h-[300px] font-mono"
                     value={sectionText[activeSectionTab] || ""}
                     onChange={handleSectionTextChange}
-                    placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle`}
+                    placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle\n\nO usar formato marcado:\n\n\n[G]Mil generaciones\n\n[C]Se [G2]postran adorarle`}
                   />
                 </ScrollArea>
+                
+                <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-2 mt-2">
+                  <p className="font-medium">Nuevo formato disponible:</p>
+                  <p>Ahora puedes usar [acorde]palabra para posicionar acordes con precisión sobre palabras específicas.</p>
+                  <p className="mt-1">Ejemplo: <code>[G]Mil [C]gene[D]raciones</code> mostrará cada acorde exactamente sobre la palabra correspondiente.</p>
+                </div>
               </div>
             </div>
           </TabsContent>
