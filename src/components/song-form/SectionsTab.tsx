@@ -53,7 +53,7 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
           <Label htmlFor="sectionText">Acordes y Letra</Label>
           <div className="flex items-center text-xs text-muted-foreground">
             <Info className="h-3 w-3 mr-1" />
-            <span>Escribir acordes en una línea y letra en la siguiente, o usar [acorde]palabra para posicionamiento exacto</span>
+            <span>Escribir acordes en una línea y letra en la siguiente, o usar formato [acorde]palabra</span>
           </div>
         </div>
         
@@ -63,14 +63,25 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
             className="min-h-[300px] font-mono"
             value={sectionText[activeSectionTab] || ""}
             onChange={onSectionTextChange}
-            placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle\n\nO usar formato marcado:\n\n\n[G]Mil generaciones\n\n[C]Se [G2]postran adorarle`}
+            placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle\n\nO usar formato marcado:\n\n\n[G]Mil [C]gene[D]raciones\n\n[C]Se [G2]postran adorarle`}
           />
         </ScrollArea>
         
-        <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-2 mt-2">
-          <p className="font-medium">Nuevo formato disponible:</p>
-          <p>Ahora puedes usar [acorde]palabra para posicionar acordes con precisión sobre palabras específicas.</p>
-          <p className="mt-1">Ejemplo: <code>[G]Mil [C]gene[D]raciones</code> mostrará cada acorde exactamente sobre la palabra correspondiente.</p>
+        <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-4 mt-2">
+          <p className="font-medium text-amber-700">✨ Para alineamiento preciso:</p>
+          <p>Use el formato <code className="bg-white px-1 py-0.5 rounded border">[acorde]palabra</code> para posicionar acordes exactamente sobre palabras específicas.</p>
+          <div className="mt-2 p-2 bg-white border rounded">
+            <p className="font-mono text-xs text-gray-500">// Escribe esto en el editor:</p>
+            <p className="font-mono">[G]Mil [C]gene[D]raciones</p>
+            <p className="font-mono text-xs text-gray-500 mt-2">// Se mostrará como:</p>
+            <div className="font-mono relative h-5 mt-1">
+              <span className="absolute text-sm font-bold" style={{left: "0ch"}}>G</span>
+              <span className="absolute text-sm font-bold" style={{left: "4ch"}}>C</span>
+              <span className="absolute text-sm font-bold" style={{left: "9ch"}}>D</span>
+            </div>
+            <p className="font-mono">Mil generaciones</p>
+          </div>
+          <p className="mt-2 text-xs text-amber-600">Este formato garantiza que el alineamiento en la guía generada coincida exactamente con el editor.</p>
         </div>
       </div>
     </div>

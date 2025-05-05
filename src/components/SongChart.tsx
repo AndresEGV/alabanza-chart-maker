@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { LayoutType, SectionType, SongData } from "../types/song";
 import SongSection from "./SongSection";
@@ -52,8 +53,13 @@ const SongChart: React.FC<SongChartProps> = ({
           position: relative;
         }
         .chord-section {
-          font-family: monospace;
+          font-family: "Courier New", monospace !important;
           letter-spacing: 0;
+        }
+        @media print {
+          .chord-lyric-container {
+            page-break-inside: avoid;
+          }
         }
         `}
       </style>

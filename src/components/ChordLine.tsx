@@ -15,15 +15,18 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
     // If we have explicit chord positions, use those
     if (line.chordPositions && line.chordPositions.length > 0) {
       return (
-        <div className="relative h-5 mb-1">
+        <div className="relative h-5 mb-1 font-mono">
           {line.chordPositions.map((chordPos, index) => (
             <span
               key={index}
               className="absolute text-sm font-bold"
               style={{
-                left: `${chordPos.position * 0.6}em`, // Adjust this factor based on your monospace font
-                fontFamily: "monospace",
+                // Use ch units for more precise monospace character positioning
+                left: `${chordPos.position}ch`,
                 bottom: 0,
+                fontFamily: "monospace",
+                // Add debug class to make positioning more visible in development
+                // className: process.env.NODE_ENV === 'development' ? 'debug-chord' : ''
               }}
             >
               {chordPos.chord}
@@ -37,7 +40,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
     if (line.chords && showChords) {
       return (
         <div 
-          className="text-sm font-bold text-black leading-tight mb-0 relative"
+          className="text-sm font-bold text-black leading-tight mb-0"
           style={{ 
             fontFamily: "monospace",
             fontWeight: 700,

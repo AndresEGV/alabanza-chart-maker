@@ -58,6 +58,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
+      <style>
+        {`
+        /* Ensure consistent monospace font across environments */
+        .chord-section {
+          font-family: "Courier New", monospace !important;
+          letter-spacing: 0;
+        }
+        
+        /* Make chord and lyric positioning more consistent for printing */
+        @media print {
+          .chord-lyric-container {
+            page-break-inside: avoid;
+          }
+          
+          .chord-section {
+            font-family: "Courier New", monospace !important;
+            letter-spacing: 0;
+          }
+        }
+        `}
+      </style>
       <div className="container max-w-7xl mx-auto px-4 print:p-0">
         <div className="mb-8 text-center print:hidden">
           <h1 className="text-4xl font-bold mb-2">Alabanza Chart Maker</h1>

@@ -8,26 +8,36 @@ export const parseChordPositionsFromLyrics = (lyrics: string): { cleanLyrics: st
   let cleanLyrics = lyrics;
   
   // Regular expression to match [chord]word pattern
-  const chordPattern = /\[([^\]]+)\]([^[]+)/g;
+  const chordPattern = /\[([^\]]+)\]([^[]*)/g;
   
-  // Find all chord positions
+  // Create a temporary lyrics version for position calculation
+  let tempLyrics = lyrics;
   let match;
-  let positionOffset = 0;
   
-  while ((match = chordPattern.exec(lyrics)) !== null) {
+  // Reset regex state by recreating it
+  const regex = new RegExp(chordPattern);
+  
+  while ((match = regex.exec(tempLyrics)) !== null) {
     const chordText = match[1];
-    const word = match[2];
-    const startPos = match.index - positionOffset;
+    const afterText = match[2];
+    const startPos = match.index;
+    
+    // Calculate position in terms of character position in the clean lyrics
+    const position = startPos - (lyrics.length - tempLyrics.length);
     
     chordPositions.push({
       chord: chordText,
-      position: startPos
+      position: position
     });
     
-    // Remove chord brackets for clean lyrics
-    cleanLyrics = cleanLyrics.replace(`[${chordText}]${word}`, word);
-    positionOffset += chordText.length + word.length + 2; // +2 for the brackets
+    // Remove this match from temp lyrics to avoid affecting future position calculations
+    tempLyrics = tempLyrics.substring(0, startPos) + 
+                 " ".repeat(chordText.length + 2) + // +2 for [] brackets
+                 tempLyrics.substring(startPos + chordText.length + 2 + afterText.length);
   }
+  
+  // Remove chord brackets for clean lyrics
+  cleanLyrics = cleanLyrics.replace(/\[([^\]]+)\]/g, "");
   
   return { cleanLyrics, chordPositions };
 };
