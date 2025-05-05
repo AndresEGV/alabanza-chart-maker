@@ -1,5 +1,4 @@
-
-import { SectionType, SongData } from "../types/song";
+import { SectionType, SongData, ChordLyricLine } from "../types/song";
 
 // Map section type to display name
 export const getSectionTitle = (type: SectionType): string => {
@@ -108,14 +107,23 @@ export const createEmptySong = (): SongData => {
 };
 
 // Convert text with line breaks into chord-lyric pairs
-export const parseChordLyricTextInput = (text: string) => {
+export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
   const lines = text.split('\n');
-  const result = [];
+  const result: ChordLyricLine[] = [];
   
   for (let i = 0; i < lines.length; i += 2) {
     const chords = lines[i] || '';
     const lyrics = lines[i + 1] || '';
-    result.push({ chords, lyrics });
+    
+    // Skip empty line pairs
+    if (!chords.trim() && !lyrics.trim()) {
+      continue;
+    }
+    
+    result.push({
+      chords,
+      lyrics
+    });
   }
   
   return result;

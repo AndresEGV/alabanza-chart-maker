@@ -47,6 +47,15 @@ const SongChart: React.FC<SongChartProps> = ({
 
   return (
     <div className={`songchart bg-white text-black max-w-5xl mx-auto p-8 print:p-4 ${layout === LayoutType.SINGLE_COLUMN ? 'single-column' : 'two-column'}`}>
+      <style jsx="true">{`
+        .chord-lyric-container {
+          position: relative;
+        }
+        .chord-section {
+          font-family: monospace;
+          letter-spacing: 0;
+        }
+      `}</style>
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>

@@ -8,19 +8,18 @@ interface ChordLineProps {
 }
 
 const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
-  // Parse the chord line to maintain proper spacing
-  const processChordLine = () => {
-    if (!line.chords) return null;
+  // Render the chord line with precise positioning
+  const renderChords = () => {
+    if (!line.chords || !showChords) return null;
     
-    // Preserva el espaciado exacto original usando un elemento pre-formatted
     return (
       <div 
-        className="text-sm font-bold text-black leading-tight mb-0"
+        className="text-sm font-bold text-black leading-tight mb-0 relative"
         style={{ 
-          whiteSpace: "pre",
-          fontFamily: "monospace", 
-          letterSpacing: "0",
-          fontWeight: 700 // Ensure chords are bold
+          fontFamily: "monospace",
+          fontWeight: 700,
+          position: "relative",
+          height: "1.5em"
         }}
       >
         {line.chords}
@@ -29,16 +28,16 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
   };
 
   return (
-    <div className="mb-1 relative">
-      {showChords && line.chords && processChordLine()}
+    <div className="mb-1 chord-lyric-container">
+      {renderChords()}
       {line.lyrics && (
         <div 
-          className="text-base text-black leading-tight"
+          className="text-base text-black leading-tight relative"
           style={{ 
             whiteSpace: "pre",
             fontFamily: "monospace",
             letterSpacing: "0",
-            fontWeight: 400 // Ensure lyrics are regular weight
+            fontWeight: 400
           }}
         >
           {line.lyrics}
