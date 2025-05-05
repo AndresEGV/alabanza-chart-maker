@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from "react";
-import { LayoutType, SectionType, SongData } from "../types/song";
+import React, { useState } from "react";
+import { LayoutType, SongData } from "../types/song";
 import SongSection from "./SongSection";
 import SectionSequence from "./SectionSequence";
 
@@ -15,7 +15,7 @@ const SongChart: React.FC<SongChartProps> = ({
   layout = LayoutType.TWO_COLUMN,
   showChords = true,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage] = useState(1);
   const maxPage = song.totalPages || 1;
 
   // Function to organize sections for layout display
@@ -49,16 +49,31 @@ const SongChart: React.FC<SongChartProps> = ({
     <div className={`songchart bg-white text-black max-w-5xl mx-auto p-8 print:p-4 ${layout === LayoutType.SINGLE_COLUMN ? 'single-column' : 'two-column'}`}>
       <style>
         {`
+        @font-face {
+          font-family: 'CourierMonospaceFix';
+          src: local('Courier New');
+          font-display: swap;
+        }
+        
         .chord-lyric-container {
           position: relative;
+          font-family: 'Courier New', monospace !important;
         }
+        
         .chord-section {
-          font-family: "Courier New", monospace !important;
+          font-family: 'Courier New', monospace !important;
           letter-spacing: 0;
         }
+        
         @media print {
           .chord-lyric-container {
             page-break-inside: avoid;
+            font-family: 'Courier New', monospace !important;
+          }
+          
+          /* For Firefox and Chromium print rendering */
+          * {
+            font-family: 'Courier New', monospace !important;
           }
         }
         `}

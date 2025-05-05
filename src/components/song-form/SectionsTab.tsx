@@ -63,12 +63,17 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
             className="min-h-[300px] font-mono"
             value={sectionText[activeSectionTab] || ""}
             onChange={onSectionTextChange}
-            placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle\n\nO usar formato marcado:\n\n\n[G]Mil [C]gene[D]raciones\n\n[C]Se [G2]postran adorarle`}
+            placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle\n\nEm            D\nLe cantan al cordero\n      C\nQue venció\n\nO usar formato marcado:\n[G]Mil gene[C]ra[D]ciones\n[C]Se postran a[G2]dorarle`}
+            style={{
+              fontFamily: "monospace",
+              letterSpacing: "0",
+              lineHeight: "1.5"
+            }}
           />
         </ScrollArea>
         
         <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-4 mt-2">
-          <p className="font-medium text-amber-700">✨ Para alineamiento preciso:</p>
+          <p className="font-medium text-amber-700">✨ Recomendación para alineamiento perfecto:</p>
           <p>Use el formato <code className="bg-white px-1 py-0.5 rounded border">[acorde]palabra</code> para posicionar acordes exactamente sobre palabras específicas.</p>
           <div className="mt-2 p-2 bg-white border rounded">
             <p className="font-mono text-xs text-gray-500">// Escribe esto en el editor:</p>
@@ -81,7 +86,7 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
             </div>
             <p className="font-mono">Mil generaciones</p>
           </div>
-          <p className="mt-2 text-xs text-amber-600">Este formato garantiza que el alineamiento en la guía generada coincida exactamente con el editor.</p>
+          <p className="mt-2 text-xs text-amber-600">Este formato garantiza que el alineamiento sea idéntico entre el editor y la guía generada.</p>
         </div>
       </div>
     </div>

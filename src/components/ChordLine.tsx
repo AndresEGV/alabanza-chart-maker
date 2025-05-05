@@ -15,18 +15,16 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
     // If we have explicit chord positions, use those
     if (line.chordPositions && line.chordPositions.length > 0) {
       return (
-        <div className="relative h-5 mb-1 font-mono">
+        <div className="relative h-5 mb-1">
           {line.chordPositions.map((chordPos, index) => (
             <span
               key={index}
               className="absolute text-sm font-bold"
               style={{
-                // Use ch units for more precise monospace character positioning
+                // Use ch units for precise monospace positioning
                 left: `${chordPos.position}ch`,
                 bottom: 0,
                 fontFamily: "monospace",
-                // Add debug class to make positioning more visible in development
-                // className: process.env.NODE_ENV === 'development' ? 'debug-chord' : ''
               }}
             >
               {chordPos.chord}
@@ -36,7 +34,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
       );
     }
     
-    // Fallback to old method if no explicit positions
+    // Use traditional chord line - ensuring monospace consistent rendering
     if (line.chords && showChords) {
       return (
         <div 
@@ -44,9 +42,9 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
           style={{ 
             fontFamily: "monospace",
             fontWeight: 700,
-            position: "relative",
-            height: "1.5em",
-            whiteSpace: "pre"
+            whiteSpace: "pre",
+            lineHeight: 1.2,
+            marginBottom: "0.2em" 
           }}
         >
           {line.chords}
@@ -67,7 +65,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
             whiteSpace: "pre",
             fontFamily: "monospace",
             letterSpacing: "0",
-            fontWeight: 400
+            lineHeight: 1.2
           }}
         >
           {line.lyrics}
