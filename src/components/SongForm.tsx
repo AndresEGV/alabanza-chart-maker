@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { LayoutType, SectionType, SongData } from "../types/song";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { parseChordLyricTextInput } from "@/utils/songUtils";
+import { parseChordLyricTextInput } from "@/utils/chordParser";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertCircle, Info, Plus, Trash } from "lucide-react";
 import {

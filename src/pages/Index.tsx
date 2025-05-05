@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import SongForm from '@/components/SongForm';
 import SongChart from '@/components/SongChart';
 import { LayoutType, SongData } from '@/types/song';
-import { createEmptySong, getSampleSongData } from '@/utils/songUtils';
+import { createEmptySong, getSampleSongData } from '@/utils/songTemplates';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
