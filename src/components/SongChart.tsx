@@ -77,6 +77,11 @@ const SongChart: React.FC<SongChartProps> = ({
           * {
             font-family: 'Courier New', monospace !important;
           }
+          
+          /* Ensure exact 'ch' unit rendering in print */
+          .chord-section span {
+            position: absolute !important;
+          }
         }
         `}
       </style>

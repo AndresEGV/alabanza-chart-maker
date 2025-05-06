@@ -53,7 +53,7 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
           <Label htmlFor="sectionText">Acordes y Letra</Label>
           <div className="flex items-center text-xs text-muted-foreground">
             <Info className="h-3 w-3 mr-1" />
-            <span>Escribir acordes en una línea y letra en la siguiente, o usar formato [acorde]sílaba</span>
+            <span>Escribir acordes en una línea y letra en la siguiente</span>
           </div>
         </div>
         
@@ -63,7 +63,16 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
             className="min-h-[300px] font-mono"
             value={sectionText[activeSectionTab] || ""}
             onChange={onSectionTextChange}
-            placeholder={`G\nMil generaciones\n\nC            G2\nSe postran adorarle\n\nEm            D\nLe cantan al cordero\n      C\nQue venció\n\nO usar formato marcado:\n[G]Mil gene[C]ra[D]ciones\n[C]Se pos[G2]tran ado[D]rarle`}
+            placeholder={`G
+Mil generaciones
+
+C            G2
+Se postran adorarle
+
+Em            D
+Le cantan al cordero
+      C
+Que venció`}
             style={{
               fontFamily: "monospace",
               letterSpacing: "0",
@@ -73,21 +82,14 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
         </ScrollArea>
         
         <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-4 mt-2">
-          <p className="font-medium text-amber-700">✨ Alineación precisa por sílaba:</p>
-          <p>Use el formato <code className="bg-white px-1 py-0.5 rounded border">[acorde]</code> justo antes de la sílaba específica donde quiere que aparezca el acorde.</p>
+          <p className="font-medium text-amber-700">⚠️ Importante:</p>
+          <p>Para mantener la alineación precisa de acordes sobre letras, use el formato de dos líneas:</p>
           <div className="mt-2 p-2 bg-white border rounded">
-            <p className="font-mono text-xs text-gray-500">// Ejemplo de posicionamiento por sílaba:</p>
-            <p className="font-mono">Le [Em]can[D]tan al cor[G]dero Que ven[C]ció</p>
-            <p className="font-mono text-xs text-gray-500 mt-2">// Se mostrará como:</p>
-            <div className="font-mono relative h-5 mt-1">
-              <span className="absolute text-sm font-bold" style={{left: "3ch"}}>Em</span>
-              <span className="absolute text-sm font-bold" style={{left: "6ch"}}>D</span>
-              <span className="absolute text-sm font-bold" style={{left: "14ch"}}>G</span>
-              <span className="absolute text-sm font-bold" style={{left: "24ch"}}>C</span>
-            </div>
-            <p className="font-mono">Le cantan al cordero Que venció</p>
+            <p className="font-mono text-xs text-gray-500">// Ejemplo de posicionamiento:</p>
+            <p className="font-mono">C            G2</p>
+            <p className="font-mono">Se postran adorarle</p>
           </div>
-          <p className="mt-2 text-xs text-amber-600">La ubicación exacta de cada acorde en el editor se mantendrá de forma idéntica en la guía generada.</p>
+          <p className="mt-1">La ubicación exacta de cada acorde en el editor se mantendrá de forma idéntica en la guía generada.</p>
         </div>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import { ChordLyricLine, ChordPosition } from "../types/song";
 
 // Parse chord positions from special format in lyrics
@@ -40,6 +41,41 @@ export const parseChordPositionsFromLyrics = (lyrics: string): { cleanLyrics: st
   cleanLyrics = cleanLyrics.replace(/\[([^\]]+)\]/g, "");
   
   return { cleanLyrics, chordPositions };
+};
+
+// Turn traditional chord-over-lyrics format into chord positions
+export const convertTraditionalToPositions = (chords: string, lyrics: string): ChordPosition[] => {
+  if (!chords || !lyrics) return [];
+  
+  const positions: ChordPosition[] = [];
+  let pos = 0;
+  
+  // Scan through the chord line
+  for (let i = 0; i < chords.length; i++) {
+    // If we find a non-whitespace chord character where previous was whitespace (or start)
+    if (chords[i].trim() !== '' && (i === 0 || chords[i-1].trim() === '')) {
+      // We found the start of a chord
+      let chordText = '';
+      let j = i;
+      
+      // Collect the entire chord
+      while (j < chords.length && chords[j].trim() !== '') {
+        chordText += chords[j];
+        j++;
+      }
+      
+      // Record position of this chord
+      positions.push({
+        chord: chordText,
+        position: i
+      });
+      
+      // Skip ahead to end of this chord
+      i = j - 1;
+    }
+  }
+  
+  return positions;
 };
 
 // Convert text with line breaks into chord-lyric pairs
@@ -97,9 +133,13 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
       
       if (nextLine && !nextLine.chordPositions) {
         // This looks like a traditional chord+lyric pair
+        // Convert traditional format to explicit chord positions
+        const chordPositions = convertTraditionalToPositions(currentLine.lyrics, nextLine.lyrics);
+        
         finalResult.push({
           chords: currentLine.lyrics, // First line is chords
-          lyrics: nextLine.lyrics      // Second line is lyrics
+          lyrics: nextLine.lyrics,    // Second line is lyrics
+          chordPositions: chordPositions // Add calculated positions
         });
         i += 2; // Skip both lines
       } else {
@@ -124,9 +164,13 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
         continue;
       }
       
+      // Calculate chord positions for traditional format
+      const chordPositions = convertTraditionalToPositions(chords, lyrics);
+      
       result.push({
         chords,
-        lyrics
+        lyrics,
+        chordPositions // Add calculated positions for traditional format
       });
     }
     

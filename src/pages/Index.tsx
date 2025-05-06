@@ -76,6 +76,18 @@ const Index = () => {
             font-family: "Courier New", monospace !important;
             letter-spacing: 0;
           }
+          
+          /* Force exact positioning in print mode */
+          .chord-section .absolute {
+            position: absolute !important;
+            font-family: "Courier New", monospace !important;
+          }
+          
+          /* Ensure 'ch' units are rendered exactly the same in print */
+          @page {
+            size: letter;
+            margin: 0.5in;
+          }
         }
         `}
       </style>

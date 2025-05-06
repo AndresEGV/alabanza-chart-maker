@@ -34,11 +34,15 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
           <div className="flex items-start">
             <Music className="h-5 w-5 mr-2 mt-0.5" />
             <div>
-              <p className="font-medium">Alineación precisa de acordes por sílaba:</p>
-              <p className="text-sm">Para alinear acordes con sílabas específicas dentro de palabras, 
-                use el formato <code className="bg-white px-1 py-0.5 rounded border">[acorde]</code> justo antes de 
-                la sílaba o letra con la que debe alinearse.</p>
-              <p className="text-sm mt-1">Ejemplo: <code className="bg-white px-1 py-0.5 rounded border">Le [Em]can[D]tan al cor[G]dero</code></p>
+              <p className="font-medium">Alineación precisa de acordes:</p>
+              <p className="text-sm">Para lograr la mejor alineación en acordes y letras, escribe los acordes en una línea
+                y la letra correspondiente en la línea siguiente. Coloca cada acorde exactamente encima 
+                de la sílaba donde debe sonar.</p>
+              <p className="text-sm mt-1">Ejemplo:</p>
+              <div className="bg-white p-2 rounded border mt-1">
+                <pre className="text-sm font-mono">G       C  D
+Mil ge-ne-ra-cio-nes</pre>
+              </div>
             </div>
           </div>
         </div>

@@ -21,7 +21,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
               key={index}
               className="absolute text-sm font-bold"
               style={{
-                // Use ch units for precise monospace positioning
+                // Use exact character position for precise monospace positioning
                 left: `${chordPos.position}ch`,
                 bottom: 0,
                 fontFamily: "monospace",
