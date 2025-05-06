@@ -7,18 +7,15 @@ export const parseChordPositionsFromLyrics = (lyrics: string): { cleanLyrics: st
   let cleanLyrics = lyrics;
   
   // Regular expression to match [chord]word pattern
-  const chordPattern = /\[([^\]]+)\]([^[]*)/g;
+  // This includes a more flexible pattern to handle mid-word chord placement
+  const chordPattern = /\[([^\]]+)\]/g;
   
   // Create a temporary working copy for position calculation
   let tempLyrics = lyrics;
   let match;
   let offset = 0;
   
-  // Reset regex state by recreating it
-  const regex = new RegExp(chordPattern);
-  
-  while ((match = regex.exec(lyrics)) !== null) {
-    const fullMatch = match[0];
+  while ((match = chordPattern.exec(lyrics)) !== null) {
     const chordText = match[1];
     const startPos = match.index - offset;
     
@@ -28,17 +25,15 @@ export const parseChordPositionsFromLyrics = (lyrics: string): { cleanLyrics: st
       position: startPos
     });
     
-    // Update lyrics and tracking variables
-    const replacementText = fullMatch.substring(chordText.length + 2); // +2 for [] brackets
-    const cutLength = fullMatch.length;
+    // Calculate how many characters to remove
+    const bracketLength = chordText.length + 2; // +2 for [] brackets
     
-    // Update our working copy for the next iteration
+    // Update our working copy by removing the chord bracket
     tempLyrics = tempLyrics.substring(0, match.index - offset) + 
-                 replacementText + 
-                 tempLyrics.substring(match.index - offset + cutLength);
+                 tempLyrics.substring(match.index - offset + bracketLength);
     
     // Track how much we've removed for position calculations
-    offset += chordText.length + 2; // +2 for the [] brackets
+    offset += bracketLength;
   }
   
   // Remove chord brackets for clean lyrics
@@ -49,9 +44,9 @@ export const parseChordPositionsFromLyrics = (lyrics: string): { cleanLyrics: st
 
 // Convert text with line breaks into chord-lyric pairs
 export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
-  // Check if the input uses [chord]word format
+  // Check if the input uses [chord] format (with or without attached words)
   if (text.includes('[') && text.includes(']')) {
-    // Process input line by line for [chord]word format
+    // Process input line by line for [chord] format
     const lines = text.split('\n');
     const result: ChordLyricLine[] = [];
     

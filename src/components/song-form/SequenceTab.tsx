@@ -34,9 +34,11 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
           <div className="flex items-start">
             <Music className="h-5 w-5 mr-2 mt-0.5" />
             <div>
-              <p className="font-medium">Alineación perfecta de acordes:</p>
-              <p className="text-sm">Para obtener la alineación exacta entre el editor y la guía generada,
-                use el formato <code className="bg-white px-1 py-0.5 rounded border">[acorde]palabra</code> en la pestaña de Secciones.</p>
+              <p className="font-medium">Alineación precisa de acordes por sílaba:</p>
+              <p className="text-sm">Para alinear acordes con sílabas específicas dentro de palabras, 
+                use el formato <code className="bg-white px-1 py-0.5 rounded border">[acorde]</code> justo antes de 
+                la sílaba o letra con la que debe alinearse.</p>
+              <p className="text-sm mt-1">Ejemplo: <code className="bg-white px-1 py-0.5 rounded border">Le [Em]can[D]tan al cor[G]dero</code></p>
             </div>
           </div>
         </div>

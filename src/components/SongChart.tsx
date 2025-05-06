@@ -58,6 +58,7 @@ const SongChart: React.FC<SongChartProps> = ({
         .chord-lyric-container {
           position: relative;
           font-family: 'Courier New', monospace !important;
+          letter-spacing: 0;
         }
         
         .chord-section {
@@ -69,6 +70,7 @@ const SongChart: React.FC<SongChartProps> = ({
           .chord-lyric-container {
             page-break-inside: avoid;
             font-family: 'Courier New', monospace !important;
+            letter-spacing: 0;
           }
           
           /* For Firefox and Chromium print rendering */

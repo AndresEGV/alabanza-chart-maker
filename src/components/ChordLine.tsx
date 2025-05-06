@@ -25,6 +25,8 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
                 left: `${chordPos.position}ch`,
                 bottom: 0,
                 fontFamily: "monospace",
+                letterSpacing: "0",
+                whiteSpace: "pre",
               }}
             >
               {chordPos.chord}
@@ -44,7 +46,8 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
             fontWeight: 700,
             whiteSpace: "pre",
             lineHeight: 1.2,
-            marginBottom: "0.2em" 
+            marginBottom: "0.2em",
+            letterSpacing: "0",
           }}
         >
           {line.chords}
