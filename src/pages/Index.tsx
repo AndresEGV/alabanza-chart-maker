@@ -64,29 +64,38 @@ const Index = () => {
         .chord-section {
           font-family: "Courier New", monospace !important;
           letter-spacing: 0;
+          white-space: pre;
+        }
+        
+        /* Force exact character positioning */
+        .chord-section span.absolute {
+          position: absolute !important;
         }
         
         /* Make chord and lyric positioning more consistent for printing */
         @media print {
+          @page {
+            size: letter;
+            margin: 0.5in;
+          }
+          
           .chord-lyric-container {
             page-break-inside: avoid;
+            font-family: "Courier New", monospace !important;
+            letter-spacing: 0;
+            white-space: pre;
           }
           
           .chord-section {
             font-family: "Courier New", monospace !important;
             letter-spacing: 0;
+            white-space: pre;
           }
           
           /* Force exact positioning in print mode */
           .chord-section .absolute {
             position: absolute !important;
             font-family: "Courier New", monospace !important;
-          }
-          
-          /* Ensure 'ch' units are rendered exactly the same in print */
-          @page {
-            size: letter;
-            margin: 0.5in;
           }
         }
         `}

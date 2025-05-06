@@ -47,10 +47,9 @@ const SongChart: React.FC<SongChartProps> = ({
 
   return (
     <div className={`songchart bg-white text-black max-w-5xl mx-auto p-8 print:p-4 ${layout === LayoutType.SINGLE_COLUMN ? 'single-column' : 'two-column'}`}>
-      <style>
-        {`
+      <style jsx>{`
         @font-face {
-          font-family: 'CourierMonospaceFix';
+          font-family: 'CourierPrime';
           src: local('Courier New');
           font-display: swap;
         }
@@ -59,11 +58,13 @@ const SongChart: React.FC<SongChartProps> = ({
           position: relative;
           font-family: 'Courier New', monospace !important;
           letter-spacing: 0;
+          white-space: pre;
         }
         
         .chord-section {
           font-family: 'Courier New', monospace !important;
           letter-spacing: 0;
+          white-space: pre;
         }
         
         @media print {
@@ -71,6 +72,7 @@ const SongChart: React.FC<SongChartProps> = ({
             page-break-inside: avoid;
             font-family: 'Courier New', monospace !important;
             letter-spacing: 0;
+            white-space: pre;
           }
           
           /* For Firefox and Chromium print rendering */
@@ -78,13 +80,15 @@ const SongChart: React.FC<SongChartProps> = ({
             font-family: 'Courier New', monospace !important;
           }
           
-          /* Ensure exact 'ch' unit rendering in print */
+          /* Ensure exact positioning in print mode */
           .chord-section span {
             position: absolute !important;
+            font-family: 'Courier New', monospace !important;
+            white-space: pre;
           }
         }
-        `}
-      </style>
+      `}</style>
+      
       {/* Header */}
       <div className="mb-6 flex justify-between items-start">
         <div>

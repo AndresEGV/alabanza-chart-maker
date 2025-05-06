@@ -21,7 +21,7 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
         <Label htmlFor="sequence">Secuencia de secciones</Label>
         <div className="text-sm text-muted-foreground mb-2 flex items-center">
           <AlertCircle className="h-4 w-4 mr-1" />
-          Ingrese la secuencia separando con espacios (ej: "I V1 C1 V2 C1 B F")
+          <span>Ingrese la secuencia separando con espacios (ej: "I V1 C1 V2 C1 B F")</span>
         </div>
         <Input
           id="sequence"
@@ -43,6 +43,7 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
                 <pre className="text-sm font-mono">G       C  D
 Mil ge-ne-ra-cio-nes</pre>
               </div>
+              <p className="text-sm mt-2">El posicionamiento exacto de los acordes se mantendrá en la guía final.</p>
             </div>
           </div>
         </div>

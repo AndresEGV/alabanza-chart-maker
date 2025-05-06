@@ -27,6 +27,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
                 fontFamily: "monospace",
                 letterSpacing: "0",
                 whiteSpace: "pre",
+                display: "inline-block"
               }}
             >
               {chordPos.chord}
@@ -36,18 +37,20 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
       );
     }
     
-    // Use traditional chord line - ensuring monospace consistent rendering
+    // Use traditional chord line - ensuring exact monospace consistent rendering
     if (line.chords && showChords) {
       return (
         <div 
-          className="text-sm font-bold text-black leading-tight mb-0"
+          className="text-sm font-bold leading-tight mb-0"
           style={{ 
             fontFamily: "monospace",
             fontWeight: 700,
             whiteSpace: "pre",
+            letterSpacing: "0",
             lineHeight: 1.2,
             marginBottom: "0.2em",
-            letterSpacing: "0",
+            height: "1.2em",
+            overflow: "visible"
           }}
         >
           {line.chords}
@@ -63,7 +66,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
       {renderPositionedChords()}
       {line.lyrics && (
         <div 
-          className="text-base text-black leading-tight relative"
+          className="text-base leading-tight relative"
           style={{ 
             whiteSpace: "pre",
             fontFamily: "monospace",

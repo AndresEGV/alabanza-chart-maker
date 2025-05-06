@@ -52,7 +52,7 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
         <div className="flex justify-between items-center">
           <Label htmlFor="sectionText">Acordes y Letra</Label>
           <div className="flex items-center text-xs text-muted-foreground">
-            <Info className="h-3 w-3 mr-1" />
+            <Info className="h-4 w-4 mr-1" />
             <span>Escribir acordes en una línea y letra en la siguiente</span>
           </div>
         </div>
@@ -76,7 +76,9 @@ Que venció`}
             style={{
               fontFamily: "monospace",
               letterSpacing: "0",
-              lineHeight: "1.5"
+              lineHeight: "1.5",
+              whiteSpace: "pre",
+              tabSize: 2
             }}
           />
         </ScrollArea>

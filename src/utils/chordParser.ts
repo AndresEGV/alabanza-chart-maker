@@ -1,4 +1,3 @@
-
 import { ChordLyricLine, ChordPosition } from "../types/song";
 
 // Parse chord positions from special format in lyrics
@@ -48,13 +47,12 @@ export const convertTraditionalToPositions = (chords: string, lyrics: string): C
   if (!chords || !lyrics) return [];
   
   const positions: ChordPosition[] = [];
-  let pos = 0;
   
-  // Scan through the chord line
+  // Scan through the chord line character by character
   for (let i = 0; i < chords.length; i++) {
-    // If we find a non-whitespace chord character where previous was whitespace (or start)
-    if (chords[i].trim() !== '' && (i === 0 || chords[i-1].trim() === '')) {
-      // We found the start of a chord
+    // If we find a non-whitespace character
+    if (chords[i].trim() !== '') {
+      // This could be the start of a chord
       let chordText = '';
       let j = i;
       
@@ -64,10 +62,10 @@ export const convertTraditionalToPositions = (chords: string, lyrics: string): C
         j++;
       }
       
-      // Record position of this chord
+      // Record position of this chord - exact character position
       positions.push({
         chord: chordText,
-        position: i
+        position: i  // This is the exact character position
       });
       
       // Skip ahead to end of this chord
@@ -106,7 +104,6 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
         });
       } else {
         // Handle as regular text line (could be a chord line or lyrics line)
-        // We'll determine if it's a chord or lyric later in pairs
         result.push({
           chords: '',
           lyrics: line
@@ -133,7 +130,6 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
       
       if (nextLine && !nextLine.chordPositions) {
         // This looks like a traditional chord+lyric pair
-        // Convert traditional format to explicit chord positions
         const chordPositions = convertTraditionalToPositions(currentLine.lyrics, nextLine.lyrics);
         
         finalResult.push({
