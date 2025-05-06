@@ -25,7 +25,7 @@ const SongChart: React.FC<SongChartProps> = ({
       .map((type) => song.sections[type])
       .filter((section) => {
         // Only include sections that have content
-        return section.lines.some((line) => line.chords || line.lyrics);
+        return section && section.lines && section.lines.some((line) => line.chords || line.lyrics);
       });
 
     if (layout === LayoutType.SINGLE_COLUMN) {
@@ -84,12 +84,14 @@ const SongChart: React.FC<SongChartProps> = ({
           }
           
           /* For Firefox and Chromium print rendering */
-          * {
+          .chord-section, .chord-lyric-container {
             font-family: 'Courier New', monospace !important;
+            font-size: 1rem;
+            letter-spacing: 0;
           }
           
           /* Ensure exact positioning in print mode */
-          .chord-section span {
+          .chord-section span.absolute {
             position: absolute !important;
             font-family: 'Courier New', monospace !important;
             white-space: pre;

@@ -41,7 +41,7 @@ const SongForm: React.FC<SongFormProps> = ({
     const initialSectionText: Record<SectionType, string> = {} as Record<SectionType, string>;
     
     Object.entries(initialSong.sections).forEach(([type, section]) => {
-      // Use our helper function to correctly preserve spacing
+      // Use our helper function to correctly preserve exact formatting
       if (section.lines && section.lines.length > 0) {
         const textWithSpacing = convertChordLyricLinesToText(section.lines);
         initialSectionText[type as SectionType] = textWithSpacing;
@@ -178,12 +178,14 @@ const SongForm: React.FC<SongFormProps> = ({
   };
 
   const handleGenerateChart = () => {
-    // Parse section text into chord-lyric pairs
+    // Parse section text into chord-lyric pairs, preserving exact formatting
     const updatedSections = { ...song.sections };
     
     Object.entries(sectionText).forEach(([type, text]) => {
       if (text && text.trim()) {
+        // Parse the text into ChordLyricLine objects
         const lines = parseChordLyricTextInput(text);
+        
         if (updatedSections[type as SectionType]) {
           updatedSections[type as SectionType] = {
             ...updatedSections[type as SectionType],

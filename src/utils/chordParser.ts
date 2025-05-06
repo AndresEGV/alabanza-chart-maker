@@ -1,4 +1,3 @@
-
 import { ChordLyricLine, ChordPosition } from "../types/song";
 
 // Parse chord positions from special format in lyrics
@@ -79,6 +78,8 @@ export const convertTraditionalToPositions = (chords: string, lyrics: string): C
 
 // Convert text with line breaks into chord-lyric pairs
 export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
+  if (!text) return [];
+  
   // Remove carriage returns but keep line feeds for consistent line endings
   const normalizedText = text.replace(/\r/g, '');
   
@@ -193,16 +194,14 @@ export const convertChordLyricLinesToText = (lines: ChordLyricLine[]): string =>
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     
-    // Preserve exactly how many newlines were in the original text
+    // Add empty line before each pair except the first
     if (i > 0) {
-      result += '\n\n'; // Always add two newlines between chord-lyric pairs
+      result += '\n\n'; // Double newline for separation between pairs
     }
     
     // Add chord line exactly as it was
     result += line.chords || '';
-    
-    // Add a single newline between chord and lyric lines
-    result += '\n';
+    result += '\n'; // Single newline between chords and lyrics
     
     // Add lyrics line exactly as it was
     result += line.lyrics || '';
