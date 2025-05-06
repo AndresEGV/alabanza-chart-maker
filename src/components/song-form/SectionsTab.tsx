@@ -74,18 +74,20 @@ Le cantan al cordero
       C
 Que venció`}
             style={{
-              fontFamily: "monospace",
+              fontFamily: "'Courier New', monospace",
               letterSpacing: "0",
               lineHeight: "1.5",
               whiteSpace: "pre",
-              tabSize: 2
+              tabSize: 2,
+              resize: "vertical",
+              width: "100%"
             }}
           />
         </ScrollArea>
         
         <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-4 mt-2">
           <p className="font-medium text-amber-700">⚠️ Importante:</p>
-          <p>Para mantener la alineación precisa de acordes sobre letras, use el formato de dos líneas:</p>
+          <p>Para mantener la alineación precisa de acordes sobre letras:</p>
           <div className="mt-2 p-2 bg-white border rounded">
             <p className="font-mono text-xs text-gray-500">// Ejemplo de posicionamiento:</p>
             <p className="font-mono">C            G2</p>

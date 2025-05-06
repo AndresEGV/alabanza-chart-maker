@@ -78,10 +78,13 @@ export const convertTraditionalToPositions = (chords: string, lyrics: string): C
 
 // Convert text with line breaks into chord-lyric pairs
 export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
+  // Remove carriage returns but keep line feeds for consistent line endings
+  const normalizedText = text.replace(/\r/g, '');
+  
   // Check if the input uses [chord] format (with or without attached words)
-  if (text.includes('[') && text.includes(']')) {
+  if (normalizedText.includes('[') && normalizedText.includes(']')) {
     // Process input line by line for [chord] format
-    const lines = text.split('\n');
+    const lines = normalizedText.split('\n');
     const result: ChordLyricLine[] = [];
     
     for (let i = 0; i < lines.length; i++) {
@@ -148,15 +151,19 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
     return finalResult;
   } else {
     // Use traditional parsing for chord-over-lyric format
-    const lines = text.split('\n');
+    const lines = normalizedText.split('\n');
     const result: ChordLyricLine[] = [];
     
     for (let i = 0; i < lines.length; i += 2) {
       const chords = lines[i] || '';
-      const lyrics = lines[i + 1] || '';
+      const lyrics = i + 1 < lines.length ? lines[i + 1] : '';
       
-      // Skip empty line pairs
+      // Skip empty line pairs (both chords and lyrics are empty)
       if (!chords.trim() && !lyrics.trim()) {
+        // Only push an empty line if not at the end to preserve proper spacing
+        if (i < lines.length - 2) {
+          result.push({ chords: '', lyrics: '' });
+        }
         continue;
       }
       
@@ -172,4 +179,27 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
     
     return result;
   }
+};
+
+// Convert ChordLyricLine array back to text for editing
+export const convertChordLyricLinesToText = (lines: ChordLyricLine[]): string => {
+  let result = '';
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // Add chord line
+    result += line.chords || '';
+    result += '\n';
+    
+    // Add lyrics line
+    result += line.lyrics || '';
+    
+    // Add extra line break between chord-lyric pairs
+    if (i < lines.length - 1) {
+      result += '\n\n';
+    }
+  }
+  
+  return result;
 };

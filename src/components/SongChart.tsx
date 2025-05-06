@@ -68,6 +68,13 @@ const SongChart: React.FC<SongChartProps> = ({
           white-space: pre;
         }
         
+        .chord-section .absolute {
+          position: absolute !important;
+          font-family: 'Courier New', monospace !important;
+          letter-spacing: 0;
+          white-space: pre;
+        }
+        
         @media print {
           .chord-lyric-container {
             page-break-inside: avoid;

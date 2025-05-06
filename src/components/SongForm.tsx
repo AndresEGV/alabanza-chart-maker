@@ -4,7 +4,7 @@ import { LayoutType, SectionType, SongData } from "../types/song";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { parseChordLyricTextInput } from "@/utils/chordParser";
+import { parseChordLyricTextInput, convertChordLyricLinesToText } from "@/utils/chordParser";
 
 // Import sub-components
 import BasicInfoTab from "./song-form/BasicInfoTab";
@@ -41,8 +41,9 @@ const SongForm: React.FC<SongFormProps> = ({
     const initialSectionText: Record<SectionType, string> = {} as Record<SectionType, string>;
     
     Object.entries(initialSong.sections).forEach(([type, section]) => {
-      const lines = section.lines.map(line => `${line.chords}\n${line.lyrics}`).join('\n\n');
-      initialSectionText[type as SectionType] = lines;
+      // Use our helper function to correctly preserve spacing
+      const textWithSpacing = convertChordLyricLinesToText(section.lines);
+      initialSectionText[type as SectionType] = textWithSpacing;
     });
     
     setSectionText(initialSectionText);
