@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { LayoutType, SectionType, SongData } from "../types/song";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -36,17 +36,26 @@ const SongForm: React.FC<SongFormProps> = ({
   const [newSectionCode, setNewSectionCode] = useState("");
   const [newSectionTitle, setNewSectionTitle] = useState("");
 
-  // Initialize section text from song data
-  React.useEffect(() => {
+  // Initialize section text from song data when the component mounts or the song changes
+  useEffect(() => {
     const initialSectionText: Record<SectionType, string> = {} as Record<SectionType, string>;
     
     Object.entries(initialSong.sections).forEach(([type, section]) => {
       // Use our helper function to correctly preserve spacing
-      const textWithSpacing = convertChordLyricLinesToText(section.lines);
-      initialSectionText[type as SectionType] = textWithSpacing;
+      if (section.lines && section.lines.length > 0) {
+        const textWithSpacing = convertChordLyricLinesToText(section.lines);
+        initialSectionText[type as SectionType] = textWithSpacing;
+      } else {
+        initialSectionText[type as SectionType] = "";
+      }
     });
     
     setSectionText(initialSectionText);
+    
+    // Set the first available section as active if the current one doesn't exist
+    if (!initialSong.sections[activeSectionTab] && Object.keys(initialSong.sections).length > 0) {
+      setActiveSectionTab(Object.keys(initialSong.sections)[0] as SectionType);
+    }
   }, [initialSong]);
 
   const handleBasicInfoChange = (
@@ -173,11 +182,15 @@ const SongForm: React.FC<SongFormProps> = ({
     const updatedSections = { ...song.sections };
     
     Object.entries(sectionText).forEach(([type, text]) => {
-      const lines = parseChordLyricTextInput(text);
-      updatedSections[type as SectionType] = {
-        ...updatedSections[type as SectionType],
-        lines
-      };
+      if (text && text.trim()) {
+        const lines = parseChordLyricTextInput(text);
+        if (updatedSections[type as SectionType]) {
+          updatedSections[type as SectionType] = {
+            ...updatedSections[type as SectionType],
+            lines
+          };
+        }
+      }
     });
     
     const updatedSong = {

@@ -1,3 +1,4 @@
+
 import { ChordLyricLine, ChordPosition } from "../types/song";
 
 // Parse chord positions from special format in lyrics
@@ -154,9 +155,10 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
     const lines = normalizedText.split('\n');
     const result: ChordLyricLine[] = [];
     
+    // Iterate over the lines in pairs (chord line followed by lyric line)
     for (let i = 0; i < lines.length; i += 2) {
-      const chords = lines[i] || '';
-      const lyrics = i + 1 < lines.length ? lines[i + 1] : '';
+      const chords = i < lines.length ? lines[i] || '' : '';
+      const lyrics = i + 1 < lines.length ? lines[i + 1] || '' : '';
       
       // Skip empty line pairs (both chords and lyrics are empty)
       if (!chords.trim() && !lyrics.trim()) {
@@ -182,23 +184,28 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
 };
 
 // Convert ChordLyricLine array back to text for editing
+// This function is crucial for preserving exact user spacing
 export const convertChordLyricLinesToText = (lines: ChordLyricLine[]): string => {
+  if (!lines || !lines.length) return '';
+  
   let result = '';
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     
-    // Add chord line
+    // Preserve exactly how many newlines were in the original text
+    if (i > 0) {
+      result += '\n\n'; // Always add two newlines between chord-lyric pairs
+    }
+    
+    // Add chord line exactly as it was
     result += line.chords || '';
+    
+    // Add a single newline between chord and lyric lines
     result += '\n';
     
-    // Add lyrics line
+    // Add lyrics line exactly as it was
     result += line.lyrics || '';
-    
-    // Add extra line break between chord-lyric pairs
-    if (i < lines.length - 1) {
-      result += '\n\n';
-    }
   }
   
   return result;
