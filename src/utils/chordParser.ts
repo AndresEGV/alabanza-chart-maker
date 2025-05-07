@@ -12,7 +12,6 @@ export const parseChordPositionsFromLyrics = (lyrics: string): { cleanLyrics: st
   
   // Create a temporary working copy for position calculation
   let tempLyrics = lyrics;
-  let match;
   let offset = 0;
   
   while ((match = chordPattern.exec(lyrics)) !== null) {

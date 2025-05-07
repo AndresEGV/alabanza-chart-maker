@@ -1,12 +1,13 @@
 
 import React from "react";
-import { SectionType, SongData } from "@/types/song";
+import { SectionType, SongData, ChordLyricLine } from "@/types/song";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Info } from "lucide-react";
 import SectionSelector from "./SectionSelector";
 import SectionNotes from "./SectionNotes";
+import { parseChordLyricTextInput } from "@/utils/chordParser";
 
 interface SectionsTabProps {
   song: SongData;
@@ -31,6 +32,52 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
   onAddNote,
   onDeleteNote,
 }) => {
+  // Preview the chord-lyric parsing to show how it will render
+  const previewParsedLines = () => {
+    if (!sectionText[activeSectionTab]) return null;
+    
+    const parsedLines = parseChordLyricTextInput(sectionText[activeSectionTab]);
+    
+    return (
+      <div className="mt-4 p-4 bg-slate-50 rounded-md border font-mono text-sm">
+        <h4 className="text-sm font-medium mb-2 text-slate-500">Preview:</h4>
+        {parsedLines.map((line, i) => {
+          // Only show chord line if it has content
+          const hasChords = line.chords && line.chords.trim().length > 0;
+          
+          return (
+            <div key={i} className="mb-2">
+              {hasChords && (
+                <div 
+                  className="text-blue-600 font-bold leading-tight" 
+                  style={{ 
+                    fontFamily: "'Courier New', monospace",
+                    whiteSpace: "pre",
+                    letterSpacing: "0",
+                    lineHeight: "1.2"
+                  }}
+                >
+                  {line.chords}
+                </div>
+              )}
+              {line.lyrics && (
+                <div 
+                  style={{ 
+                    fontFamily: "'Courier New', monospace",
+                    whiteSpace: "pre",
+                    letterSpacing: "0"
+                  }}
+                >
+                  {line.lyrics}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-4">
       <SectionSelector 
@@ -84,6 +131,9 @@ Que venció`}
             }}
           />
         </ScrollArea>
+        
+        {/* Preview the chord-lyric parsing to help users understand how it will render */}
+        {sectionText[activeSectionTab]?.trim() && previewParsedLines()}
         
         <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-4 mt-2">
           <p className="font-medium text-amber-700">⚠️ Importante:</p>
