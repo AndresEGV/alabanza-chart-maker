@@ -1,3 +1,4 @@
+
 import { ChordLyricLine, ChordPosition } from "../types/song";
 
 // Parse chord positions from special format in lyrics
@@ -14,6 +15,7 @@ export const parseChordPositionsFromLyrics = (lyrics: string): { cleanLyrics: st
   let tempLyrics = lyrics;
   let offset = 0;
   
+  let match: RegExpExecArray | null;
   while ((match = chordPattern.exec(lyrics)) !== null) {
     const chordText = match[1];
     const startPos = match.index - offset;
