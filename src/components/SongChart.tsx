@@ -60,6 +60,7 @@ const SongChart: React.FC<SongChartProps> = ({
           font-family: 'Courier New', monospace !important;
           letter-spacing: 0;
           white-space: pre;
+          margin-bottom: 0 !important;
         }
         
         .chord-section {
@@ -75,12 +76,23 @@ const SongChart: React.FC<SongChartProps> = ({
           white-space: pre;
         }
         
+        /* Remove excess spacing */
+        .chord-section > div {
+          margin-bottom: 0 !important;
+        }
+        
+        .chord-section > div > div:first-child {
+          margin-bottom: 0 !important;
+          height: 1em !important;
+        }
+        
         @media print {
           .chord-lyric-container {
             page-break-inside: avoid;
             font-family: 'Courier New', monospace !important;
             letter-spacing: 0;
             white-space: pre;
+            margin-bottom: 0 !important;
           }
           
           /* For Firefox and Chromium print rendering */

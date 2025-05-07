@@ -123,3 +123,16 @@
     height: 100%;
   }
 }
+
+/* Compact chord-lyric spacing */
+.chord-lyric-container {
+  margin-bottom: 0 !important;
+}
+
+.chord-section > div {
+  margin-bottom: 0 !important;
+}
+
+.chord-section .chord-lyric-container:not(:last-child) {
+  margin-bottom: 0.25rem !important;
+}

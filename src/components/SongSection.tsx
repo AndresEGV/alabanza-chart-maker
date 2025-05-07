@@ -56,7 +56,7 @@ const SongSection: React.FC<SongSectionProps> = ({
           </div>
         )}
       </div>
-      <div className="font-mono chord-section" style={{ fontFamily: "'Courier New', monospace", whiteSpace: "pre" }}>
+      <div className="font-mono chord-section space-y-1" style={{ fontFamily: "'Courier New', monospace", whiteSpace: "pre" }}>
         {section.lines.map((line, index) => (
           <ChordLine key={index} line={line} showChords={showChords} />
         ))}

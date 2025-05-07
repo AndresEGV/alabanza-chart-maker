@@ -46,15 +46,17 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
           const hasChords = line.chords && line.chords.trim().length > 0;
           
           return (
-            <div key={i} className="mb-2">
+            <div key={i} className="mb-0">
               {hasChords && (
                 <div 
-                  className="text-blue-600 font-bold leading-tight" 
+                  className="text-blue-600 font-bold leading-none" 
                   style={{ 
                     fontFamily: "'Courier New', monospace",
                     whiteSpace: "pre",
                     letterSpacing: "0",
-                    lineHeight: "1.2"
+                    lineHeight: "1",
+                    height: "1em",
+                    marginBottom: "0"
                   }}
                 >
                   {line.chords}
@@ -65,7 +67,9 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
                   style={{ 
                     fontFamily: "'Courier New', monospace",
                     whiteSpace: "pre",
-                    letterSpacing: "0"
+                    letterSpacing: "0",
+                    lineHeight: "1.1",
+                    marginTop: "0"
                   }}
                 >
                   {line.lyrics}
