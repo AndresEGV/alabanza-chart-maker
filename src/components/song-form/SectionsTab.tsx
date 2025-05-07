@@ -77,7 +77,7 @@ Que venció`}
               fontFamily: "'Courier New', monospace",
               letterSpacing: "0",
               lineHeight: "1.5",
-              whiteSpace: "pre-wrap",  // Changed from pre to pre-wrap for better handling
+              whiteSpace: "pre",
               tabSize: 2,
               resize: "vertical",
               width: "100%"
