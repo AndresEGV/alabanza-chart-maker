@@ -10,10 +10,31 @@ interface ChordLineProps {
 const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
   // Function to render chords with explicit positioning
   const renderPositionedChords = () => {
-    if (!line.lyrics || !showChords) return null;
+    // If showChords is false, don't render chords
+    if (!showChords) return null;
     
-    // If we have explicit chord positions, use those
-    if (line.chordPositions && line.chordPositions.length > 0) {
+    // Special case: If we only have chords without lyrics, show them directly
+    if (line.chords && !line.lyrics) {
+      return (
+        <div 
+          className="text-sm font-bold leading-none mb-2"
+          style={{ 
+            fontFamily: "'Courier New', monospace",
+            fontWeight: 700,
+            whiteSpace: "pre",
+            letterSpacing: "0",
+            lineHeight: "1",
+            height: "1em",
+            overflow: "visible"
+          }}
+        >
+          {line.chords}
+        </div>
+      );
+    }
+    
+    // If we have explicit chord positions and lyrics, use those
+    if (line.chordPositions && line.chordPositions.length > 0 && line.lyrics) {
       return (
         <div className="relative h-4 mb-0 chord-section">
           {line.chordPositions.map((chordPos, index) => (
@@ -39,7 +60,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
     }
     
     // Use traditional chord line - ensuring exact monospace consistent rendering
-    if (line.chords && showChords) {
+    if (line.chords && showChords && line.lyrics) {
       return (
         <div 
           className="text-sm font-bold leading-none mb-0"

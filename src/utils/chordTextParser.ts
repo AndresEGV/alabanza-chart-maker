@@ -1,3 +1,4 @@
+
 import { ChordLyricLine, ChordPosition } from "../types/song";
 import { parseChordPositionsFromLyrics, convertTraditionalToPositions } from "./chordPositionParser";
 
@@ -69,8 +70,17 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
         });
         i += 2; // Skip both lines
       } else {
-        // This is just a single line
-        finalResult.push(currentLine);
+        // Special case: standalone chord line without associated lyrics
+        if (currentLine.lyrics && currentLine.lyrics.trim() && !nextLine) {
+          finalResult.push({
+            chords: currentLine.lyrics,
+            lyrics: '',
+            chordPositions: []
+          });
+        } else {
+          // This is just a single line
+          finalResult.push(currentLine);
+        }
         i++;
       }
     }
@@ -80,6 +90,11 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
     // Use traditional parsing for chord-over-lyric format
     const lines = normalizedText.split('\n');
     const result: ChordLyricLine[] = [];
+    
+    // Special case: if there's just one line with chords only
+    if (lines.length === 1 && lines[0].trim()) {
+      return [{ chords: lines[0], lyrics: '', chordPositions: [] }];
+    }
     
     // Iterate over the lines in pairs (chord line followed by lyric line)
     for (let i = 0; i < lines.length; i += 2) {
@@ -92,6 +107,12 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
         if (i < lines.length - 2) {
           result.push({ chords: '', lyrics: '' });
         }
+        continue;
+      }
+      
+      // Special case: Last chord line without lyrics
+      if (chords.trim() && i + 1 >= lines.length) {
+        result.push({ chords, lyrics: '', chordPositions: [] });
         continue;
       }
       

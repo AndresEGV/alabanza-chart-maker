@@ -26,6 +26,11 @@ const SongSection: React.FC<SongSectionProps> = ({
 
   const circleBorderColor = section.color || getCircleBorderColor(section.type);
 
+  // Check if section has any non-empty lines (either chords or lyrics)
+  const hasContent = section.lines.some(line => 
+    (line.chords && line.chords.trim()) || (line.lyrics && line.lyrics.trim())
+  );
+
   return (
     <div className="relative border border-chart-border rounded-md mb-4 p-4 bg-white">
       <div className="flex items-start mb-2">
@@ -56,11 +61,13 @@ const SongSection: React.FC<SongSectionProps> = ({
           </div>
         )}
       </div>
-      <div className="font-mono chord-section space-y-1" style={{ fontFamily: "'Courier New', monospace", whiteSpace: "pre" }}>
-        {section.lines.map((line, index) => (
-          <ChordLine key={index} line={line} showChords={showChords} />
-        ))}
-      </div>
+      {hasContent && (
+        <div className="font-mono chord-section space-y-1" style={{ fontFamily: "'Courier New', monospace", whiteSpace: "pre" }}>
+          {section.lines.map((line, index) => (
+            <ChordLine key={index} line={line} showChords={showChords} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
