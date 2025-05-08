@@ -122,11 +122,34 @@
     width: 100%;
     height: 100%;
   }
+  
+  /* Fix for two-column layout when printing */
+  .two-column-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    column-gap: 2rem !important;
+    width: 100% !important;
+  }
+  
+  .column-content {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+  }
+  
+  /* Ensure character-precise positioning */
+  .chord-section .absolute {
+    transform: none !important;
+    left: attr(data-position ch) !important;
+  }
 }
 
 /* Compact chord-lyric spacing */
 .chord-lyric-container {
   margin-bottom: 0 !important;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chord-section > div {
@@ -135,4 +158,29 @@
 
 .chord-section .chord-lyric-container:not(:last-child) {
   margin-bottom: 0.25rem !important;
+}
+
+/* Ensure chord positioning in two-column layout */
+.two-column-grid .column-content {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix for chord positioning in two-column layout */
+.two-column-grid .chord-section {
+  position: relative;
+}
+
+.two-column-grid .chord-section span.absolute {
+  position: absolute !important;
+  transform: none !important;
+}
+
+/* Ensure consistent character width */
+.chord-section, 
+.chord-lyric-container, 
+.chord-section span.absolute {
+  font-family: 'Courier New', monospace !important;
+  letter-spacing: 0;
+  white-space: pre;
 }

@@ -49,7 +49,11 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
                 letterSpacing: "0",
                 whiteSpace: "pre",
                 lineHeight: "1",
-                display: "inline-block"
+                display: "inline-block",
+                width: "auto", // Allow chord width to be natural
+                minWidth: "fit-content", // Ensure the chord text isn't truncated
+                transform: "translateX(0)", // Ensure no transformation affects positioning
+                textAlign: "left" // Ensure text alignment is consistent
               }}
             >
               {chordPos.chord}
@@ -72,7 +76,8 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
             lineHeight: "1",
             marginBottom: "0",
             height: "1em",
-            overflow: "visible"
+            overflow: "visible",
+            position: "relative" // Ensure positioning context
           }}
         >
           {line.chords}

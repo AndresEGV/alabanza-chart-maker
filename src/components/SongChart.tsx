@@ -86,6 +86,23 @@ const SongChart: React.FC<SongChartProps> = ({
           height: 1em !important;
         }
         
+        /* Ensure two-column layout preserves chord positioning */
+        .two-column .chord-section {
+          width: 100%;
+          box-sizing: border-box;
+        }
+        
+        .two-column .chord-section span.absolute {
+          position: absolute !important;
+          /* Ensure chord position is exactly maintained */
+          transform: none !important;
+        }
+        
+        .two-column .chord-lyric-container {
+          width: 100%;
+          box-sizing: border-box;
+        }
+        
         @media print {
           .chord-lyric-container {
             page-break-inside: avoid;
@@ -107,6 +124,18 @@ const SongChart: React.FC<SongChartProps> = ({
             position: absolute !important;
             font-family: 'Courier New', monospace !important;
             white-space: pre;
+          }
+          
+          /* Fix for two-column printing */
+          .two-column .songchart {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 2rem;
+          }
+          
+          .two-column .chord-section {
+            width: 100%;
+            position: relative;
           }
         }
         `}
@@ -130,14 +159,14 @@ const SongChart: React.FC<SongChartProps> = ({
       <SectionSequence sequence={song.sectionSequence} />
 
       {/* Song Content */}
-      <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8' : 'grid-cols-1'}`}>
-        <div>
+      <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8 two-column-grid' : 'grid-cols-1'}`}>
+        <div className="column-content">
           {leftColumn.map((section) => (
             <SongSection key={section.type} section={section} showChords={showChords} />
           ))}
         </div>
         {layout === LayoutType.TWO_COLUMN && rightColumn.length > 0 && (
-          <div>
+          <div className="column-content">
             {rightColumn.map((section) => (
               <SongSection key={section.type} section={section} showChords={showChords} />
             ))}
