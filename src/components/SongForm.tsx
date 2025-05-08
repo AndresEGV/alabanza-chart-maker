@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { LayoutType, SectionType, SongData } from "../types/song";
 import { Button } from "@/components/ui/button";
@@ -41,10 +40,10 @@ const SongForm: React.FC<SongFormProps> = ({
     const initialSectionText: Record<SectionType, string> = {} as Record<SectionType, string>;
     
     Object.entries(initialSong.sections).forEach(([type, section]) => {
-      // Use our helper function to correctly preserve exact formatting
+      // Use our helper function to correctly preserve exact formatting without extra spacing
       if (section.lines && section.lines.length > 0) {
-        const textWithSpacing = convertChordLyricLinesToText(section.lines);
-        initialSectionText[type as SectionType] = textWithSpacing;
+        const textWithoutExtraSpacing = convertChordLyricLinesToText(section.lines);
+        initialSectionText[type as SectionType] = textWithoutExtraSpacing;
       } else {
         initialSectionText[type as SectionType] = "";
       }

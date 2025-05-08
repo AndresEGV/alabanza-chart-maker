@@ -18,7 +18,7 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       
-      // Skip empty lines
+      // Skip empty lines but add them to preserve formatting
       if (!line.trim()) {
         result.push({ chords: '', lyrics: '' });
         continue;
@@ -71,14 +71,14 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
         i += 2; // Skip both lines
       } else {
         // Special case: standalone chord line without associated lyrics
-        if (currentLine.lyrics && currentLine.lyrics.trim() && !nextLine) {
+        if (currentLine.lyrics && currentLine.lyrics.trim()) {
           finalResult.push({
             chords: currentLine.lyrics,
             lyrics: '',
             chordPositions: []
           });
         } else {
-          // This is just a single line
+          // This is just a single line (could be empty)
           finalResult.push(currentLine);
         }
         i++;
@@ -96,34 +96,37 @@ export const parseChordLyricTextInput = (text: string): ChordLyricLine[] => {
       return [{ chords: lines[0], lyrics: '', chordPositions: [] }];
     }
     
-    // Iterate over the lines in pairs (chord line followed by lyric line)
-    for (let i = 0; i < lines.length; i += 2) {
-      const chords = i < lines.length ? lines[i] || '' : '';
-      const lyrics = i + 1 < lines.length ? lines[i + 1] || '' : '';
+    // Iterate through the lines to create chord-lyric pairs
+    for (let i = 0; i < lines.length; i++) {
+      const currentLine = lines[i];
+      const nextLine = i + 1 < lines.length ? lines[i + 1] : null;
       
-      // Skip empty line pairs (both chords and lyrics are empty)
-      if (!chords.trim() && !lyrics.trim()) {
-        // Only push an empty line if not at the end to preserve proper spacing
-        if (i < lines.length - 2) {
-          result.push({ chords: '', lyrics: '' });
+      if (currentLine.trim()) { // Current line has content
+        if (nextLine && nextLine.trim()) { // Next line also has content
+          // Assume chord-lyric pair
+          const chordPositions = convertTraditionalToPositions(currentLine, nextLine);
+          result.push({
+            chords: currentLine,
+            lyrics: nextLine,
+            chordPositions: chordPositions
+          });
+          i++; // Skip the next line as we've processed it
+        } else {
+          // Solo chord line or solo lyric - assume chord
+          result.push({ chords: currentLine, lyrics: '', chordPositions: [] });
+          
+          // If next line is empty, just skip it (don't add to result)
+          if (nextLine === '') {
+            i++;
+          }
         }
-        continue;
+      } else if (currentLine === '') {
+        // Empty line - preserve one empty line for spacing
+        // Only add if we're not at the start/end and previous wasn't empty
+        if (i > 0 && i < lines.length - 1 && lines[i-1] !== '') {
+          result.push({ chords: '', lyrics: '', chordPositions: [] });
+        }
       }
-      
-      // Special case: Last chord line without lyrics
-      if (chords.trim() && i + 1 >= lines.length) {
-        result.push({ chords, lyrics: '', chordPositions: [] });
-        continue;
-      }
-      
-      // Calculate chord positions for traditional format
-      const chordPositions = convertTraditionalToPositions(chords, lyrics);
-      
-      result.push({
-        chords,
-        lyrics,
-        chordPositions // Add calculated positions for traditional format
-      });
     }
     
     return result;
