@@ -42,7 +42,7 @@ const LayoutTab: React.FC<LayoutTabProps> = ({
               <div className="h-2 w-3/4 bg-slate-100 rounded"></div>
             </div>
           </div>
-          <span className="mt-2">Minimalista</span>
+          <span className="mt-2">Dos columnas</span>
         </Button>
       </div>
     </div>
