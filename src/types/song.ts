@@ -1,4 +1,3 @@
-
 // Song section types
 export type SectionType = string;
 
@@ -50,9 +49,16 @@ export enum LayoutType {
 export const defaultSectionColors: Record<string, string> = {
   "I": "#0EA5E9",  // Ocean Blue for Intro
   "V": "#8B5CF6",  // Vivid Purple for Verse
+  "V1": "#8B5CF6", // Same purple for V1
+  "V2": "#8B5CF6", // Same purple for V2
+  "V3": "#8B5CF6", // Same purple for V3
+  "V4": "#8B5CF6", // Same purple for V4
   "C": "#F97316",  // Bright Orange for Chorus
+  "C1": "#F97316", // Same orange for C1
+  "C2": "#F97316", // Same orange for C2
   "B": "#EA384C",  // Red for Bridge
   "P": "#D946EF",  // Magenta Pink for Pre-Chorus
+  "Pr": "#D946EF", // Same pink for Pr
   "R": "#10B981",  // Emerald Green for Refrain
   "Rf": "#4338CA", // Indigo for Reflection
   "Rp": "#059669", // Teal Green for Repeat

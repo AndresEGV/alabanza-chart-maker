@@ -39,7 +39,11 @@ const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = ({
       <div className="section-header">
         <div 
           className="section-circle"
-          style={{ borderColor: circleBorderColor }}
+          style={{ 
+            borderColor: circleBorderColor,
+            backgroundColor: "white",
+            color: "black"
+          }}
         >
           {section.type}
         </div>
