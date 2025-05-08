@@ -42,7 +42,8 @@ export interface SongData {
 
 export enum LayoutType {
   SINGLE_COLUMN = "single",
-  TWO_COLUMN = "two-column"
+  TWO_COLUMN = "two-column",
+  MINIMALIST = "minimalist"  // New minimalist style based on the provided images
 }
 
 // Default section colors - unique bold, highly saturated colors for each section type

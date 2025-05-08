@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { LayoutType, SongData } from "../types/song";
 import SongSection from "./SongSection";
 import SectionSequence from "./SectionSequence";
+import MinimalistSongChart from "./MinimalistSongChart";
 
 interface SongChartProps {
   song: SongData;
@@ -17,6 +18,11 @@ const SongChart: React.FC<SongChartProps> = ({
 }) => {
   const [currentPage] = useState(1);
   const maxPage = song.totalPages || 1;
+
+  // If minimalist layout is selected, use the MinimalistSongChart component
+  if (layout === LayoutType.MINIMALIST) {
+    return <MinimalistSongChart song={song} showChords={showChords} />;
+  }
 
   // Function to organize sections for layout display
   const organizeSections = () => {
