@@ -40,35 +40,12 @@ const SongChart: React.FC<SongChartProps> = ({
         rightColumn: []
       };
     } else {
-      // For two-column layout:
-      // Calculate approximate line counts for better content distribution
-      const totalLines = orderedSections.reduce((total, section) => 
-        total + (section.lines?.length || 0) + 2, // +2 for section header/spacing
-        0
-      );
-      
-      const leftColumn = [];
-      const rightColumn = [];
-      let leftColumnLines = 0;
-      
-      // Target is to fill approximately half the total lines in each column
-      const halfTotalLines = Math.ceil(totalLines / 2);
-      
-      // Distribute sections to balance columns while preserving content flow:
-      // First fill left column until it reaches approximately half of total lines,
-      // then start filling the right column
-      for (const section of orderedSections) {
-        const sectionLines = (section.lines?.length || 0) + 2; // +2 for header/spacing
-        
-        if (leftColumnLines < halfTotalLines) {
-          leftColumn.push(section);
-          leftColumnLines += sectionLines;
-        } else {
-          rightColumn.push(section);
-        }
-      }
-
-      return { leftColumn, rightColumn };
+      // Split into two columns
+      const midpoint = Math.ceil(orderedSections.length / 2);
+      return {
+        leftColumn: orderedSections.slice(0, midpoint),
+        rightColumn: orderedSections.slice(midpoint),
+      };
     }
   };
 
@@ -132,21 +109,6 @@ const SongChart: React.FC<SongChartProps> = ({
           box-sizing: border-box;
         }
         
-        /* Improved two-column grid layout with fixed columns */
-        .two-column-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-          page-break-inside: avoid;
-          break-inside: avoid;
-          width: 100%;
-        }
-        
-        .column-content {
-          page-break-inside: avoid;
-          break-inside: avoid;
-        }
-        
         @media print {
           .chord-lyric-container {
             page-break-inside: avoid;
@@ -170,24 +132,16 @@ const SongChart: React.FC<SongChartProps> = ({
             white-space: pre;
           }
           
-          /* Fix for two-column printing - force the browser to render columns */
-          .two-column-grid {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 2rem !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-            width: 100% !important;
+          /* Fix for two-column printing */
+          .two-column .songchart {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 2rem;
           }
           
-          .column-content {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-          }
-          
-          @page {
-            margin: 0.5in;
-            size: portrait;
+          .two-column .chord-section {
+            width: 100%;
+            position: relative;
           }
         }
         `}
@@ -210,14 +164,14 @@ const SongChart: React.FC<SongChartProps> = ({
       {/* Section Sequence */}
       <SectionSequence sequence={song.sectionSequence} />
 
-      {/* Song Content with proper left-to-right flow */}
-      <div className={`${layout === LayoutType.TWO_COLUMN ? 'two-column-grid' : ''}`}>
+      {/* Song Content */}
+      <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8 two-column-grid' : 'grid-cols-1'}`}>
         <div className="column-content">
           {leftColumn.map((section) => (
             <SongSection key={section.type} section={section} showChords={showChords} />
           ))}
         </div>
-        {layout === LayoutType.TWO_COLUMN && (
+        {layout === LayoutType.TWO_COLUMN && rightColumn.length > 0 && (
           <div className="column-content">
             {rightColumn.map((section) => (
               <SongSection key={section.type} section={section} showChords={showChords} />

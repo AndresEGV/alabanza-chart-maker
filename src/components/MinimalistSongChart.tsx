@@ -25,35 +25,11 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
         return section && section.lines && section.lines.some((line) => line.chords || line.lyrics);
       });
 
-    // Create a balanced two-column distribution
-    const leftColumn = [];
-    const rightColumn = [];
-    
-    // Calculate total content lines more accurately
-    const totalLines = orderedSections.reduce((total, section) => 
-      total + (section.lines?.length || 0) + 2, // +2 for header/spacing
-      0
-    );
-    
-    let leftColumnLines = 0;
-    const halfTotalLines = Math.ceil(totalLines / 2);
-    
-    // Distribute sections to achieve balance while maintaining flow:
-    // Fill left column until approximately half of total lines, then start right column
-    for (const section of orderedSections) {
-      const sectionLines = (section.lines?.length || 0) + 2;
-      
-      if (leftColumnLines < halfTotalLines) {
-        leftColumn.push(section);
-        leftColumnLines += sectionLines;
-      } else {
-        rightColumn.push(section);
-      }
-    }
-
+    // Split into two columns
+    const midpoint = Math.ceil(orderedSections.length / 2);
     return {
-      leftColumn,
-      rightColumn,
+      leftColumn: orderedSections.slice(0, midpoint),
+      rightColumn: orderedSections.slice(midpoint),
     };
   };
 
@@ -177,19 +153,13 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
           border-style: solid;
         }
         
-        /* Two column layout with fixed grid - ensures proper flow */
-        .minimalist-chart .two-column-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-          page-break-inside: avoid;
-          break-inside: avoid;
-          width: 100%;
-        }
-        
-        .minimalist-chart .column-content {
-          page-break-inside: avoid;
-          break-inside: avoid;
+        /* Two column layout */
+        @media (min-width: 768px) {
+          .minimalist-chart .two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+          }
         }
         
         @media print {
@@ -201,19 +171,10 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
             display: grid !important;
             grid-template-columns: 1fr 1fr !important;
             gap: 2rem !important;
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-            width: 100% !important;
           }
           
-          .minimalist-chart .column-content {
-            page-break-inside: avoid !important;
-            break-inside: avoid !important;
-          }
-          
-          @page {
-            margin: 0.5in;
-            size: portrait;
+          .page-break {
+            page-break-after: always;
           }
         }
         `}
