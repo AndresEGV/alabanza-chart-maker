@@ -41,42 +41,34 @@ const SongChart: React.FC<SongChartProps> = ({
       };
     } else {
       // For two-column layout:
-      // We need to ensure content flows properly according to standard publishing layout:
-      // First fill left column completely, then right column, then move to next page
-      
-      // Create a simple sequential distribution - every other section goes to right column
-      // This ensures content flows down left column first, then right column
-      const leftColumn = [];
-      const rightColumn = [];
-      
-      // Calculate total content size more accurately with line count
+      // Calculate approximate line counts for better content distribution
       const totalLines = orderedSections.reduce((total, section) => 
-        total + (section.lines?.length || 0) + 2, // +2 for header/footer
+        total + (section.lines?.length || 0) + 2, // +2 for section header/spacing
         0
       );
       
+      const leftColumn = [];
+      const rightColumn = [];
       let leftColumnLines = 0;
-      const targetLinesPerColumn = totalLines / 2;
       
-      // Distribute sections to achieve balance while maintaining flow
+      // Target is to fill approximately half the total lines in each column
+      const halfTotalLines = Math.ceil(totalLines / 2);
+      
+      // Distribute sections to balance columns while preserving content flow:
+      // First fill left column until it reaches approximately half of total lines,
+      // then start filling the right column
       for (const section of orderedSections) {
-        const sectionLines = (section.lines?.length || 0) + 2;
+        const sectionLines = (section.lines?.length || 0) + 2; // +2 for header/spacing
         
-        // If left column is empty or not yet at half capacity, add to left
-        // This gives priority to filling the left column first
-        if (leftColumnLines < targetLinesPerColumn) {
+        if (leftColumnLines < halfTotalLines) {
           leftColumn.push(section);
           leftColumnLines += sectionLines;
         } else {
-          // Once left column reaches half capacity, start filling right column
           rightColumn.push(section);
         }
       }
 
-      return {
-        leftColumn,
-        rightColumn,
-      };
+      return { leftColumn, rightColumn };
     }
   };
 
@@ -140,6 +132,21 @@ const SongChart: React.FC<SongChartProps> = ({
           box-sizing: border-box;
         }
         
+        /* Improved two-column grid layout with fixed columns */
+        .two-column-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          page-break-inside: avoid;
+          break-inside: avoid;
+          width: 100%;
+        }
+        
+        .column-content {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+        
         @media print {
           .chord-lyric-container {
             page-break-inside: avoid;
@@ -163,37 +170,25 @@ const SongChart: React.FC<SongChartProps> = ({
             white-space: pre;
           }
           
-          /* Fix for two-column printing - force the browser to maintain columns */
-          .two-column .songchart {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            justify-content: space-between !important;
+          /* Fix for two-column printing - force the browser to render columns */
+          .two-column-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 2rem !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            width: 100% !important;
           }
           
-          .two-column {
-            column-count: 2 !important;
-            column-gap: 2rem !important;
-            column-fill: balance !important;
-            orphans: 2 !important;
-            widows: 2 !important;
+          .column-content {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
           }
           
           @page {
             margin: 0.5in;
+            size: portrait;
           }
-        }
-        
-        /* Improved two-column grid layout */
-        .two-column-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2rem;
-          page-break-inside: avoid;
-        }
-        
-        .column-content {
-          page-break-inside: avoid;
-          break-inside: avoid;
         }
         `}
       </style>
