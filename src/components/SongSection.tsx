@@ -46,19 +46,26 @@ const SongSection: React.FC<SongSectionProps> = ({
           </div>
         </div>
         <h3 className="ml-2 font-bold text-lg">{section.title}</h3>
+        
         {section.notes && section.notes.some(note => note.position === "left") && (
           <div className="ml-4 text-sm italic text-gray-600">
-            {section.notes.filter(note => note.position === "left").map((note, i) => (
-              <div key={i} className="whitespace-pre-line">{note.text}</div>
-            ))}
+            {section.notes
+              .filter(note => note.position === "left")
+              .map((note, i) => (
+                <span key={i} className="mr-2">{note.text}</span>
+              ))}
           </div>
         )}
+        
         <div className="flex-grow"></div>
+        
         {section.notes && section.notes.some(note => note.position === "right") && (
           <div className="text-sm italic text-gray-600 text-right">
-            {section.notes.filter(note => note.position === "right").map((note, i) => (
-              <div key={i} className="whitespace-pre-line">{note.text}</div>
-            ))}
+            {section.notes
+              .filter(note => note.position === "right")
+              .map((note, i) => (
+                <span key={i} className="ml-2">{note.text}</span>
+              ))}
           </div>
         )}
       </div>

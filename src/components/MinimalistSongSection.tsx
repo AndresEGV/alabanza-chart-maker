@@ -26,10 +26,6 @@ const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = ({
 
   const circleBorderColor = section.color || getCircleBorderColor(section.type);
 
-  // Combine right and left notes
-  const leftNotes = section.notes?.filter(note => note.position === "left") || [];
-  const rightNotes = section.notes?.filter(note => note.position === "right") || [];
-  
   const hasContent = section.lines && section.lines.some(line => 
     (line.chords && line.chords.trim()) || (line.lyrics && line.lyrics.trim())
   );
@@ -51,20 +47,22 @@ const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = ({
           {section.title}
         </div>
         
-        {/* Notes as italic text to the right */}
-        {(leftNotes.length > 0 || rightNotes.length > 0) && (
+        {section.notes && section.notes.length > 0 && (
           <div className="section-notes">
-            {leftNotes.map((note, i) => (
-              <span key={`left-${i}`} className="mr-2">{note.text}</span>
-            ))}
-            {rightNotes.map((note, i) => (
-              <span key={`right-${i}`} className="ml-2">{note.text}</span>
-            ))}
+            {section.notes
+              .filter(note => note.position === "left")
+              .map((note, i) => (
+                <span key={`left-${i}`} className="mr-2">{note.text}</span>
+              ))}
+            {section.notes
+              .filter(note => note.position === "right")
+              .map((note, i) => (
+                <span key={`right-${i}`} className="ml-2">{note.text}</span>
+              ))}
           </div>
         )}
       </div>
 
-      {/* Chord and lyric content */}
       {hasContent && (
         <div className="chord-content space-y-1">
           {section.lines.map((line, index) => (
