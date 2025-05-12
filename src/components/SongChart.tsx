@@ -41,35 +41,35 @@ const SongChart: React.FC<SongChartProps> = ({
       };
     } else {
       // For two-column layout:
-      // We need to distribute sections between columns so that content flows:
-      // 1. Down the left column
-      // 2. Then down the right column
-      // 3. Only then to the next page
+      // We need to ensure content flows properly according to standard publishing layout:
+      // First fill left column completely, then right column, then move to next page
       
-      // Estimate the amount of content in each section
-      const sectionSizes = orderedSections.map(section => ({
-        section,
-        size: (section.lines?.length || 0) + 2 // +2 for header/footer
-      }));
-      
+      // Create a simple sequential distribution - every other section goes to right column
+      // This ensures content flows down left column first, then right column
       const leftColumn = [];
       const rightColumn = [];
       
-      // Calculate total content size
-      const totalSize = sectionSizes.reduce((sum, item) => sum + item.size, 0);
-      const halfSize = totalSize / 2;
+      // Calculate total content size more accurately with line count
+      const totalLines = orderedSections.reduce((total, section) => 
+        total + (section.lines?.length || 0) + 2, // +2 for header/footer
+        0
+      );
       
-      // Track how much content we've added to the left column
-      let leftSize = 0;
+      let leftColumnLines = 0;
+      const targetLinesPerColumn = totalLines / 2;
       
-      // Fill left column until we reach approximately half the content
-      for (const item of sectionSizes) {
-        // If adding this section would make left column too large, put it in right column
-        if (leftSize > 0 && (leftSize + item.size > halfSize)) {
-          rightColumn.push(item.section);
+      // Distribute sections to achieve balance while maintaining flow
+      for (const section of orderedSections) {
+        const sectionLines = (section.lines?.length || 0) + 2;
+        
+        // If left column is empty or not yet at half capacity, add to left
+        // This gives priority to filling the left column first
+        if (leftColumnLines < targetLinesPerColumn) {
+          leftColumn.push(section);
+          leftColumnLines += sectionLines;
         } else {
-          leftColumn.push(item.section);
-          leftSize += item.size;
+          // Once left column reaches half capacity, start filling right column
+          rightColumn.push(section);
         }
       }
 
@@ -163,17 +163,37 @@ const SongChart: React.FC<SongChartProps> = ({
             white-space: pre;
           }
           
-          /* Fix for two-column printing */
+          /* Fix for two-column printing - force the browser to maintain columns */
           .two-column .songchart {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            column-gap: 2rem;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: space-between !important;
           }
           
-          .two-column .chord-section {
-            width: 100%;
-            position: relative;
+          .two-column {
+            column-count: 2 !important;
+            column-gap: 2rem !important;
+            column-fill: balance !important;
+            orphans: 2 !important;
+            widows: 2 !important;
           }
+          
+          @page {
+            margin: 0.5in;
+          }
+        }
+        
+        /* Improved two-column grid layout */
+        .two-column-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          page-break-inside: avoid;
+        }
+        
+        .column-content {
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
         `}
       </style>
@@ -196,7 +216,7 @@ const SongChart: React.FC<SongChartProps> = ({
       <SectionSequence sequence={song.sectionSequence} />
 
       {/* Song Content with proper left-to-right flow */}
-      <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8 two-column-grid' : 'grid-cols-1'}`}>
+      <div className={`${layout === LayoutType.TWO_COLUMN ? 'two-column-grid' : ''}`}>
         <div className="column-content">
           {leftColumn.map((section) => (
             <SongSection key={section.type} section={section} showChords={showChords} />

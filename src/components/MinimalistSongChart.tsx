@@ -25,30 +25,31 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
         return section && section.lines && section.lines.some((line) => line.chords || line.lyrics);
       });
 
-    // Calculate section sizes for balanced column distribution
-    const sectionSizes = orderedSections.map(section => ({
-      section,
-      size: (section.lines?.length || 0) + 2 // +2 for header/footer
-    }));
-    
+    // Create a simple sequential distribution that ensures proper column flow
+    // Content must fill left column first, then right column on same page
     const leftColumn = [];
     const rightColumn = [];
     
-    // Calculate total content size
-    const totalSize = sectionSizes.reduce((sum, item) => sum + item.size, 0);
-    const halfSize = totalSize / 2;
+    // Calculate total content size more accurately with line count
+    const totalLines = orderedSections.reduce((total, section) => 
+      total + (section.lines?.length || 0) + 2, // +2 for header/footer
+      0
+    );
     
-    // Track how much content we've added to the left column
-    let leftSize = 0;
+    let leftColumnLines = 0;
+    const targetLinesPerColumn = totalLines / 2;
     
-    // Fill left column until we reach approximately half the content
-    for (const item of sectionSizes) {
-      // If adding this section would make left column too large, put it in right column
-      if (leftSize > 0 && (leftSize + item.size > halfSize)) {
-        rightColumn.push(item.section);
+    // Distribute sections to achieve balance while maintaining flow
+    for (const section of orderedSections) {
+      const sectionLines = (section.lines?.length || 0) + 2;
+      
+      // If left column is empty or not yet at half capacity, add to left
+      if (leftColumnLines < targetLinesPerColumn) {
+        leftColumn.push(section);
+        leftColumnLines += sectionLines;
       } else {
-        leftColumn.push(item.section);
-        leftSize += item.size;
+        // Once left column reaches half capacity, start filling right column
+        rightColumn.push(section);
       }
     }
 
@@ -178,13 +179,17 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
           border-style: solid;
         }
         
-        /* Two column layout */
-        @media (min-width: 768px) {
-          .minimalist-chart .two-column-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-          }
+        /* Two column layout - force correct flow */
+        .minimalist-chart .two-column-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          page-break-inside: avoid;
+        }
+        
+        .minimalist-chart .column-content {
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
         
         @media print {
@@ -196,6 +201,11 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
             display: grid !important;
             grid-template-columns: 1fr 1fr !important;
             gap: 2rem !important;
+            column-count: 2 !important;
+            column-gap: 2rem !important;
+            column-fill: balance !important;
+            orphans: 2 !important;
+            widows: 2 !important;
           }
           
           .page-break {
