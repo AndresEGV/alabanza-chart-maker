@@ -40,40 +40,42 @@ const SongChart: React.FC<SongChartProps> = ({
         rightColumn: []
       };
     } else {
-      // For two-column layout, implement proper content flow:
-      // Estimate height of each section to distribute evenly between columns
-      // This is an approximation - for a more accurate solution, we would need to measure actual rendered heights
+      // For two-column layout:
+      // We need to distribute sections between columns so that content flows:
+      // 1. Down the left column
+      // 2. Then down the right column
+      // 3. Only then to the next page
       
-      const totalLines = orderedSections.reduce((count, section) => {
-        // Count lines plus some overhead for section headers, title, etc.
-        return count + (section.lines?.length || 0) + 2;
-      }, 0);
+      // Estimate the amount of content in each section
+      const sectionSizes = orderedSections.map(section => ({
+        section,
+        size: (section.lines?.length || 0) + 2 // +2 for header/footer
+      }));
       
-      const halfLines = Math.ceil(totalLines / 2);
+      const leftColumn = [];
+      const rightColumn = [];
       
-      let currentLines = 0;
-      let midpointIndex = 0;
+      // Calculate total content size
+      const totalSize = sectionSizes.reduce((sum, item) => sum + item.size, 0);
+      const halfSize = totalSize / 2;
       
-      // Find the section that would best split the content in half
-      for (let i = 0; i < orderedSections.length; i++) {
-        const section = orderedSections[i];
-        currentLines += (section.lines?.length || 0) + 2; // +2 for section header/footer
-        
-        if (currentLines >= halfLines) {
-          midpointIndex = i + 1; // Include this section in left column
-          break;
+      // Track how much content we've added to the left column
+      let leftSize = 0;
+      
+      // Fill left column until we reach approximately half the content
+      for (const item of sectionSizes) {
+        // If adding this section would make left column too large, put it in right column
+        if (leftSize > 0 && (leftSize + item.size > halfSize)) {
+          rightColumn.push(item.section);
+        } else {
+          leftColumn.push(item.section);
+          leftSize += item.size;
         }
       }
-      
-      // If we didn't find a midpoint or it would put everything in the left column,
-      // use a simple half-and-half split
-      if (midpointIndex === 0 || midpointIndex >= orderedSections.length) {
-        midpointIndex = Math.ceil(orderedSections.length / 2);
-      }
-      
+
       return {
-        leftColumn: orderedSections.slice(0, midpointIndex),
-        rightColumn: orderedSections.slice(midpointIndex),
+        leftColumn,
+        rightColumn,
       };
     }
   };

@@ -25,11 +25,36 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
         return section && section.lines && section.lines.some((line) => line.chords || line.lyrics);
       });
 
-    // Split into two columns
-    const midpoint = Math.ceil(orderedSections.length / 2);
+    // Calculate section sizes for balanced column distribution
+    const sectionSizes = orderedSections.map(section => ({
+      section,
+      size: (section.lines?.length || 0) + 2 // +2 for header/footer
+    }));
+    
+    const leftColumn = [];
+    const rightColumn = [];
+    
+    // Calculate total content size
+    const totalSize = sectionSizes.reduce((sum, item) => sum + item.size, 0);
+    const halfSize = totalSize / 2;
+    
+    // Track how much content we've added to the left column
+    let leftSize = 0;
+    
+    // Fill left column until we reach approximately half the content
+    for (const item of sectionSizes) {
+      // If adding this section would make left column too large, put it in right column
+      if (leftSize > 0 && (leftSize + item.size > halfSize)) {
+        rightColumn.push(item.section);
+      } else {
+        leftColumn.push(item.section);
+        leftSize += item.size;
+      }
+    }
+
     return {
-      leftColumn: orderedSections.slice(0, midpoint),
-      rightColumn: orderedSections.slice(midpoint),
+      leftColumn,
+      rightColumn,
     };
   };
 
