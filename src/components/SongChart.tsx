@@ -40,11 +40,40 @@ const SongChart: React.FC<SongChartProps> = ({
         rightColumn: []
       };
     } else {
-      // Split into two columns
-      const midpoint = Math.ceil(orderedSections.length / 2);
+      // For two-column layout, implement proper content flow:
+      // Estimate height of each section to distribute evenly between columns
+      // This is an approximation - for a more accurate solution, we would need to measure actual rendered heights
+      
+      const totalLines = orderedSections.reduce((count, section) => {
+        // Count lines plus some overhead for section headers, title, etc.
+        return count + (section.lines?.length || 0) + 2;
+      }, 0);
+      
+      const halfLines = Math.ceil(totalLines / 2);
+      
+      let currentLines = 0;
+      let midpointIndex = 0;
+      
+      // Find the section that would best split the content in half
+      for (let i = 0; i < orderedSections.length; i++) {
+        const section = orderedSections[i];
+        currentLines += (section.lines?.length || 0) + 2; // +2 for section header/footer
+        
+        if (currentLines >= halfLines) {
+          midpointIndex = i + 1; // Include this section in left column
+          break;
+        }
+      }
+      
+      // If we didn't find a midpoint or it would put everything in the left column,
+      // use a simple half-and-half split
+      if (midpointIndex === 0 || midpointIndex >= orderedSections.length) {
+        midpointIndex = Math.ceil(orderedSections.length / 2);
+      }
+      
       return {
-        leftColumn: orderedSections.slice(0, midpoint),
-        rightColumn: orderedSections.slice(midpoint),
+        leftColumn: orderedSections.slice(0, midpointIndex),
+        rightColumn: orderedSections.slice(midpointIndex),
       };
     }
   };
@@ -164,14 +193,14 @@ const SongChart: React.FC<SongChartProps> = ({
       {/* Section Sequence */}
       <SectionSequence sequence={song.sectionSequence} />
 
-      {/* Song Content */}
+      {/* Song Content with proper left-to-right flow */}
       <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8 two-column-grid' : 'grid-cols-1'}`}>
         <div className="column-content">
           {leftColumn.map((section) => (
             <SongSection key={section.type} section={section} showChords={showChords} />
           ))}
         </div>
-        {layout === LayoutType.TWO_COLUMN && rightColumn.length > 0 && (
+        {layout === LayoutType.TWO_COLUMN && (
           <div className="column-content">
             {rightColumn.map((section) => (
               <SongSection key={section.type} section={section} showChords={showChords} />
