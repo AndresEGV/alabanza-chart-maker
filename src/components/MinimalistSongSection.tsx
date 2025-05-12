@@ -46,22 +46,27 @@ const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = ({
         <div className="section-title">
           {section.title}
         </div>
-        
-        {section.notes && section.notes.length > 0 && (
-          <div className="section-notes">
+      </div>
+      
+      {/* Section notes positioned correctly below the section title */}
+      {section.notes && section.notes.length > 0 && (
+        <div className="flex justify-between text-sm italic text-gray-600 mt-1 mb-2">
+          <div>
             {section.notes
               .filter(note => note.position === "left")
               .map((note, i) => (
                 <span key={`left-${i}`} className="mr-2">{note.text}</span>
               ))}
+          </div>
+          <div className="text-right">
             {section.notes
               .filter(note => note.position === "right")
               .map((note, i) => (
                 <span key={`right-${i}`} className="ml-2">{note.text}</span>
               ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {hasContent && (
         <div className="chord-content space-y-1">

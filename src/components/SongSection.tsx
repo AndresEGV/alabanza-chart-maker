@@ -47,28 +47,29 @@ const SongSection: React.FC<SongSectionProps> = ({
         </div>
         <h3 className="ml-2 font-bold text-lg">{section.title}</h3>
         
-        {section.notes && section.notes.some(note => note.position === "left") && (
-          <div className="ml-4 text-sm italic text-gray-600">
+        <div className="flex-grow"></div>
+      </div>
+      
+      {/* Section notes - positioned at correct vertical height */}
+      {section.notes && section.notes.length > 0 && (
+        <div className="flex justify-between text-sm italic text-gray-600 -mt-2 mb-2">
+          <div>
             {section.notes
               .filter(note => note.position === "left")
               .map((note, i) => (
                 <span key={i} className="mr-2">{note.text}</span>
               ))}
           </div>
-        )}
-        
-        <div className="flex-grow"></div>
-        
-        {section.notes && section.notes.some(note => note.position === "right") && (
-          <div className="text-sm italic text-gray-600 text-right">
+          <div className="text-right">
             {section.notes
               .filter(note => note.position === "right")
               .map((note, i) => (
                 <span key={i} className="ml-2">{note.text}</span>
               ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+      
       {hasContent && (
         <div className="font-mono chord-section space-y-1" style={{ fontFamily: "'Courier New', monospace", whiteSpace: "pre" }}>
           {section.lines.map((line, index) => (
