@@ -26,9 +26,16 @@ const SongChart: React.FC<SongChartProps> = ({
 
   // Function to organize sections for layout display
   const organizeSections = () => {
-    // Get the sections in sequence order
+    
+    // Get the sections in sequence order with unique indices
     const orderedSections = song.sectionSequence
-      .map((type) => song.sections[type])
+      .map((type, sequenceIndex) => {
+        return {
+          ...song.sections[type],
+          type,
+          sequenceIndex // Add unique sequence index
+        };
+      })
       .filter((section) => {
         // Only include sections that have content
         return section && section.lines && section.lines.some((line) => line.chords || line.lyrics);
@@ -50,6 +57,7 @@ const SongChart: React.FC<SongChartProps> = ({
   };
 
   const { leftColumn, rightColumn } = organizeSections();
+  
 
   return (
     <div className={`songchart bg-white text-black max-w-5xl mx-auto p-8 print:p-4 ${layout === LayoutType.SINGLE_COLUMN ? 'single-column' : 'two-column'}`}>
@@ -168,13 +176,21 @@ const SongChart: React.FC<SongChartProps> = ({
       <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8 two-column-grid' : 'grid-cols-1'}`}>
         <div className="column-content">
           {leftColumn.map((section) => (
-            <SongSection key={section.type} section={section} showChords={showChords} />
+            <SongSection 
+              key={`section-${section.type}-${section.sequenceIndex}-${section.lines?.[0]?.chords || ''}`} 
+              section={section} 
+              showChords={showChords} 
+            />
           ))}
         </div>
         {layout === LayoutType.TWO_COLUMN && rightColumn.length > 0 && (
           <div className="column-content">
             {rightColumn.map((section) => (
-              <SongSection key={section.type} section={section} showChords={showChords} />
+              <SongSection 
+                key={`section-${section.type}-${section.sequenceIndex}-${section.lines?.[0]?.chords || ''}`} 
+                section={section} 
+                showChords={showChords} 
+              />
             ))}
           </div>
         )}
@@ -195,4 +211,16 @@ const SongChart: React.FC<SongChartProps> = ({
   );
 };
 
-export default SongChart;
+// Memoizar el componente para evitar re-renders innecesarios
+export default React.memo(SongChart, (prevProps, nextProps) => {
+  // Solo re-renderizar si realmente cambian las props importantes
+  return (
+    prevProps.layout === nextProps.layout &&
+    prevProps.showChords === nextProps.showChords &&
+    prevProps.song.title === nextProps.song.title &&
+    prevProps.song.artist === nextProps.song.artist &&
+    prevProps.song.key === nextProps.song.key &&
+    JSON.stringify(prevProps.song.sections) === JSON.stringify(nextProps.song.sections) &&
+    JSON.stringify(prevProps.song.sectionSequence) === JSON.stringify(nextProps.song.sectionSequence)
+  );
+});

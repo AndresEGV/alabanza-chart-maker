@@ -15,11 +15,11 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
 }) => {
   // Organize sections for layout display
   const organizeSections = () => {
-    // Get the sections in sequence order with proper filtering
+    // Get the sections in sequence order with unique indices
     const orderedSections = song.sectionSequence
-      .map((type) => {
+      .map((type, sequenceIndex) => {
         const section = song.sections[type];
-        return section ? { ...section, type } : null;
+        return section ? { ...section, type, sequenceIndex } : null;
       })
       .filter((section) => {
         return section && section.lines && section.lines.some((line) => line.chords || line.lyrics);
@@ -220,18 +220,18 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
         {/* Song Content in Two Columns */}
         <div className="two-column-grid">
           <div className="column-content">
-            {leftColumn.map((section, index) => (
+            {leftColumn.map((section) => (
               <MinimalistSongSection 
-                key={`${section.type}-${index}`} 
+                key={`section-${section.sequenceIndex}-${section.lines?.[0]?.chords || 'empty'}`} 
                 section={section} 
                 showChords={showChords}
               />
             ))}
           </div>
           <div className="column-content">
-            {rightColumn.map((section, index) => (
+            {rightColumn.map((section) => (
               <MinimalistSongSection 
-                key={`${section.type}-${index}`} 
+                key={`section-${section.sequenceIndex}-${section.lines?.[0]?.chords || 'empty'}`} 
                 section={section} 
                 showChords={showChords}
               />

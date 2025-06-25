@@ -72,13 +72,19 @@ const SongSection: React.FC<SongSectionProps> = ({
       
       {hasContent && (
         <div className="font-mono chord-section space-y-1" style={{ fontFamily: "'Courier New', monospace", whiteSpace: "pre" }}>
-          {section.lines.map((line, index) => (
-            <ChordLine key={index} line={line} showChords={showChords} />
-          ))}
+          {section.lines.map((line, index) => {
+            // Crear una key única que incluya el contenido de los acordes
+            const uniqueKey = `${section.type}-${index}-${line.chords || ''}`;
+            return (
+              <ChordLine key={uniqueKey} line={line} showChords={showChords} />
+            );
+          })}
         </div>
       )}
     </div>
   );
 };
+
+SongSection.displayName = 'SongSection';
 
 export default SongSection;

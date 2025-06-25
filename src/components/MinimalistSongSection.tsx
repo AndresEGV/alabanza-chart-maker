@@ -8,7 +8,7 @@ interface MinimalistSongSectionProps {
   showChords?: boolean;
 }
 
-const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = ({
+const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = React.memo(({
   section,
   showChords = true
 }) => {
@@ -72,7 +72,7 @@ const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = ({
         <div className="chord-content space-y-1">
           {section.lines.map((line, index) => (
             <MinimalistChordLine 
-              key={index} 
+              key={`line-${index}-${line.chords || 'empty'}`} 
               line={line} 
               showChords={showChords} 
             />
@@ -81,6 +81,8 @@ const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = ({
       )}
     </div>
   );
-};
+});
+
+MinimalistSongSection.displayName = 'MinimalistSongSection';
 
 export default MinimalistSongSection;

@@ -7,6 +7,34 @@ interface ChordLineProps {
   showChords?: boolean;
 }
 
+// Custom comparison function for React.memo
+const areEqual = (prevProps: ChordLineProps, nextProps: ChordLineProps) => {
+  // Compare basic properties
+  if (prevProps.showChords !== nextProps.showChords ||
+      prevProps.line.chords !== nextProps.line.chords ||
+      prevProps.line.lyrics !== nextProps.line.lyrics ||
+      (prevProps.line as any)._transpositionKey !== (nextProps.line as any)._transpositionKey) {
+    return false;
+  }
+  
+  // Compare chord positions arrays
+  const prevPositions = prevProps.line.chordPositions || [];
+  const nextPositions = nextProps.line.chordPositions || [];
+  
+  if (prevPositions.length !== nextPositions.length) {
+    return false;
+  }
+  
+  for (let i = 0; i < prevPositions.length; i++) {
+    if (prevPositions[i].chord !== nextPositions[i].chord ||
+        prevPositions[i].position !== nextPositions[i].position) {
+      return false;
+    }
+  }
+  
+  return true;
+};
+
 const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
   // Function to render chords with explicit positioning
   const renderPositionedChords = () => {
@@ -17,6 +45,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
     if (line.chords && !line.lyrics) {
       return (
         <div 
+          key={`chords-only-${line.chords}`}
           className="text-sm font-bold leading-none mb-2"
           style={{ 
             fontFamily: "'Courier New', monospace",
@@ -67,6 +96,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
     if (line.chords && showChords && line.lyrics) {
       return (
         <div 
+          key={`chords-${line.chords}`}
           className="text-sm font-bold leading-none mb-0"
           style={{ 
             fontFamily: "'Courier New', monospace",
@@ -79,9 +109,8 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
             overflow: "visible",
             position: "relative" // Ensure positioning context
           }}
-        >
-          {line.chords}
-        </div>
+          dangerouslySetInnerHTML={{ __html: line.chords }}
+        />
       );
     }
     
@@ -108,5 +137,7 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
     </div>
   );
 };
+
+ChordLine.displayName = 'ChordLine';
 
 export default ChordLine;

@@ -7,7 +7,7 @@ interface MinimalistChordLineProps {
   showChords?: boolean;
 }
 
-const MinimalistChordLine: React.FC<MinimalistChordLineProps> = ({ 
+const MinimalistChordLine: React.FC<MinimalistChordLineProps> = React.memo(({ 
   line, 
   showChords = true 
 }) => {
@@ -110,6 +110,8 @@ const MinimalistChordLine: React.FC<MinimalistChordLineProps> = ({
       )}
     </div>
   );
-};
+});
+
+MinimalistChordLine.displayName = 'MinimalistChordLine';
 
 export default MinimalistChordLine;

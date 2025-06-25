@@ -17,20 +17,20 @@
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 210 40% 94%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 215.4 16.3% 35%; /* Improved contrast from 46.9% to 35% */
 
-    --accent: 210 40% 96.1%;
+    --accent: 210 40% 94%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 85%; /* Improved contrast from 91.4% to 85% */
+    --input: 214.3 31.8% 85%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
@@ -123,24 +123,94 @@
     height: 100%;
   }
   
-  /* Fix for two-column layout when printing */
+  /* Fix for two-column layout when printing - use CSS columns for natural flow */
   .two-column-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    display: block !important;
+    columns: 2 !important;
     column-gap: 2rem !important;
+    column-fill: auto !important;
     width: 100% !important;
   }
   
   .column-content {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 0 !important;
+    display: contents !important;
   }
   
-  /* Ensure character-precise positioning */
+  /* Prevent sections from breaking across columns but maintain dynamic height */
+  .chord-section,
+  .section-container {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 1rem !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
+  
+  /* Specific handling for minimalist layout */
+  .minimalist-chart .two-column-grid {
+    display: block !important;
+    columns: 2 !important;
+    column-gap: 2rem !important;
+    column-fill: auto !important;
+    width: 100% !important;
+  }
+  
+  .minimalist-chart .column-content {
+    display: contents !important;
+  }
+  
+  /* Maintain dynamic card sizing in print mode */
+  .chord-section > div,
+  .section-container > div {
+    height: auto !important;
+    flex: none !important;
+  }
+  
+  /* Preserve original padding and spacing */
+  .p-4 {
+    padding: 1rem !important;
+  }
+  
+  /* Ensure character-precise positioning for chord alignment */
   .chord-section .absolute {
-    transform: none !important;
-    left: attr(data-position ch) !important;
+    position: absolute !important;
+    font-family: 'Courier New', monospace !important;
+    white-space: nowrap !important;
+    letter-spacing: normal !important;
+  }
+  
+  /* Maintain chord positioning in column layout */
+  .two-column-grid .chord-section .absolute,
+  .minimalist-chart .chord-section .absolute {
+    position: absolute !important;
+    font-family: 'Courier New', monospace !important;
+    white-space: nowrap !important;
+    letter-spacing: normal !important;
+  }
+  
+  /* Preserve chord-lyric container structure */
+  .chord-section,
+  .chord-lyric-container {
+    position: relative !important;
+    font-family: 'Courier New', monospace !important;
+    letter-spacing: 0 !important;
+    white-space: pre !important;
+  }
+  
+  /* Fix for column content display */
+  .two-column-grid .chord-section,
+  .minimalist-chart .chord-section {
+    position: relative !important;
+    display: block !important;
+  }
+  
+  /* Add spacing between structure buttons and content */
+  .songchart .grid {
+    margin-top: 2rem !important;
+  }
+  
+  .minimalist-chart .two-column-grid {
+    margin-top: 2rem !important;
   }
 }
 
@@ -183,4 +253,13 @@
   font-family: 'Courier New', monospace !important;
   letter-spacing: 0;
   white-space: pre;
+}
+
+/* Add spacing between structure buttons and content in normal view */
+.songchart .grid {
+  margin-top: 2rem;
+}
+
+.minimalist-chart .two-column-grid {
+  margin-top: 2rem;
 }
