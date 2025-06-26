@@ -1,6 +1,7 @@
 
 import React from "react";
 import { ChordLyricLine } from "../types/song";
+import { parseFormattedText } from "../utils/textFormatter";
 
 interface MinimalistChordLineProps {
   line: ChordLyricLine;
@@ -105,7 +106,17 @@ const MinimalistChordLine: React.FC<MinimalistChordLineProps> = React.memo(({
             marginTop: "0"
           }}
         >
-          {line.lyrics}
+          {parseFormattedText(line.lyrics).map((segment, index) => (
+            <span
+              key={index}
+              style={{
+                fontWeight: segment.bold ? 'bold' : 'normal',
+                fontStyle: segment.italic ? 'italic' : 'normal'
+              }}
+            >
+              {segment.text}
+            </span>
+          ))}
         </div>
       )}
     </div>

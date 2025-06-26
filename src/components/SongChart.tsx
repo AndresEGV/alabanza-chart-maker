@@ -140,16 +140,24 @@ const SongChart: React.FC<SongChartProps> = ({
             white-space: pre;
           }
           
-          /* Fix for two-column printing */
-          .two-column .songchart {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            column-gap: 2rem;
+          /* Fix for two-column printing - use CSS columns for natural flow */
+          .two-column-grid {
+            display: block !important;
+            columns: 2 !important;
+            column-gap: 2rem !important;
+            column-fill: auto !important;
+            width: 100% !important;
           }
           
-          .two-column .chord-section {
-            width: 100%;
-            position: relative;
+          .column-content {
+            display: contents !important;
+          }
+          
+          /* Prevent sections from breaking across columns */
+          .chord-section {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            margin-bottom: 1rem !important;
           }
         }
         `}

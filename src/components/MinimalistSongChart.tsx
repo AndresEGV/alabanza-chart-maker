@@ -168,9 +168,22 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
           }
           
           .minimalist-chart .two-column-grid {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 2rem !important;
+            display: block !important;
+            columns: 2 !important;
+            column-gap: 2rem !important;
+            column-fill: auto !important;
+            width: 100% !important;
+          }
+          
+          .minimalist-chart .column-content {
+            display: contents !important;
+          }
+          
+          /* Prevent sections from breaking across columns */
+          .minimalist-chart .section-container {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            margin-bottom: 1rem !important;
           }
           
           .page-break {

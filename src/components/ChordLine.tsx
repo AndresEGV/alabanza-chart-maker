@@ -1,6 +1,7 @@
 
 import React from "react";
 import { ChordLyricLine, ChordPosition } from "../types/song";
+import { parseFormattedText } from "../utils/textFormatter";
 
 interface ChordLineProps {
   line: ChordLyricLine;
@@ -131,7 +132,17 @@ const ChordLine: React.FC<ChordLineProps> = ({ line, showChords = true }) => {
             marginTop: "0"
           }}
         >
-          {line.lyrics}
+          {parseFormattedText(line.lyrics).map((segment, index) => (
+            <span
+              key={index}
+              style={{
+                fontWeight: segment.bold ? 'bold' : 'normal',
+                fontStyle: segment.italic ? 'italic' : 'normal'
+              }}
+            >
+              {segment.text}
+            </span>
+          ))}
         </div>
       )}
     </div>

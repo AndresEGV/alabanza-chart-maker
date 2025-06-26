@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useRef } from "react";
 import { SectionType, SongData, ChordLyricLine } from "@/types/song";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,6 +8,8 @@ import { Info } from "lucide-react";
 import SectionSelector from "./SectionSelector";
 import SectionNotes from "./SectionNotes";
 import { parseChordLyricTextInput } from "@/utils/chordParser";
+import FormatToolbar from "@/components/FormatToolbar";
+import { applyFormat, parseFormattedText } from "@/utils/textFormatter";
 
 interface SectionsTabProps {
   song: SongData;
@@ -32,6 +34,37 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
   onAddNote,
   onDeleteNote,
 }) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  const handleFormat = (format: 'bold' | 'italic') => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    
+    const { selectionStart, selectionEnd } = textarea;
+    const currentText = sectionText[activeSectionTab] || '';
+    
+    const { newText, newSelectionStart, newSelectionEnd } = applyFormat(
+      currentText,
+      selectionStart,
+      selectionEnd,
+      format
+    );
+    
+    // Create synthetic event to update the text
+    const syntheticEvent = {
+      target: {
+        value: newText
+      }
+    } as React.ChangeEvent<HTMLTextAreaElement>;
+    
+    onSectionTextChange(syntheticEvent);
+    
+    // Restore selection after React re-renders
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(newSelectionStart, newSelectionEnd);
+    }, 0);
+  };
   // Preview the chord-lyric parsing to show how it will render
   const previewParsedLines = () => {
     if (!sectionText[activeSectionTab]) return null;
@@ -72,7 +105,17 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
                     marginTop: "0"
                   }}
                 >
-                  {line.lyrics}
+                  {parseFormattedText(line.lyrics).map((segment, index) => (
+                    <span
+                      key={index}
+                      style={{
+                        fontWeight: segment.bold ? 'bold' : 'normal',
+                        fontStyle: segment.italic ? 'italic' : 'normal'
+                      }}
+                    >
+                      {segment.text}
+                    </span>
+                  ))}
                 </div>
               )}
             </div>
@@ -101,7 +144,10 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
       
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <Label htmlFor="sectionText">Acordes y Letra</Label>
+          <div className="flex items-center gap-4">
+            <Label htmlFor="sectionText">Acordes y Letra</Label>
+            <FormatToolbar onFormat={handleFormat} />
+          </div>
           <div className="flex items-center text-xs text-muted-foreground">
             <Info className="h-4 w-4 mr-1" />
             <span>Escribir acordes en una línea y letra en la siguiente</span>
@@ -110,6 +156,7 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
         
         <ScrollArea className="h-96 border rounded-md p-4">
           <Textarea
+            ref={textareaRef}
             id="sectionText"
             className="min-h-[300px] font-mono"
             value={sectionText[activeSectionTab] || ""}
@@ -148,6 +195,13 @@ Que venció`}
             <p className="font-mono">Se postran adorarle</p>
           </div>
           <p className="mt-1">La ubicación exacta de cada acorde en el editor se mantendrá de forma idéntica en la guía generada.</p>
+          <div className="mt-3 pt-3 border-t border-yellow-200">
+            <p className="font-medium text-amber-700">Formato de texto:</p>
+            <p className="mt-1">• Negrita: **texto en negrita**</p>
+            <p>• Cursiva: _texto en cursiva_</p>
+            <p>• Negrita y cursiva: **_texto_** o _**texto**_</p>
+            <p className="mt-2 text-xs">Selecciona el texto y usa los botones para aplicar/quitar formato</p>
+          </div>
         </div>
       </div>
     </div>
