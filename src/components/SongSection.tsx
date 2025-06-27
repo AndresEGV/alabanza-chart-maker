@@ -52,7 +52,7 @@ const SongSection: React.FC<SongSectionProps> = ({
       
       {/* Section notes - positioned at correct vertical height */}
       {section.notes && section.notes.length > 0 && (
-        <div className="flex justify-between text-sm italic text-gray-600 -mt-2 mb-2">
+        <div className="flex justify-between text-xs italic text-gray-600 -mt-2 mb-2">
           <div>
             {section.notes
               .filter(note => note.position === "left")

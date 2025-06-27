@@ -115,7 +115,7 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
         .minimalist-chart .section-notes {
           margin-left: auto;
           font-style: italic;
-          font-size: 0.75rem;
+          font-size: 0.625rem;
           color: #6b7280;
         }
         

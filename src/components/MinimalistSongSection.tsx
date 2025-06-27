@@ -50,7 +50,7 @@ const MinimalistSongSection: React.FC<MinimalistSongSectionProps> = React.memo((
       
       {/* Section notes positioned correctly below the section title */}
       {section.notes && section.notes.length > 0 && (
-        <div className="flex justify-between text-sm italic text-gray-600 mt-1 mb-2">
+        <div className="flex justify-between text-xs italic text-gray-600 mt-1 mb-2">
           <div>
             {section.notes
               .filter(note => note.position === "left")
