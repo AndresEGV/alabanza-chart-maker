@@ -217,14 +217,58 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
                                defaultSectionColors[baseType] || 
                                defaultSectionColors.default;
             
+            // Function to extract repeat number from section content
+            const getRepeatNumber = (sectionType: string): string | null => {
+              if (!song.sections || !song.sections[sectionType]) return null;
+              
+              const section = song.sections[sectionType];
+              // Check all lines for patterns like "X2", "X3", "X4", etc.
+              for (const line of section.lines) {
+                const content = `${line.chords || ''} ${line.lyrics || ''}`.trim();
+                const match = content.match(/\bX(\d+)\b/i);
+                if (match) {
+                  return match[1]; // Return just the number
+                }
+              }
+              return null;
+            };
+            
+            const repeatNumber = getRepeatNumber(sectionType);
+            
             return (
               <div 
                 key={index}
-                className="sequence-item"
+                className="sequence-item relative"
                 style={{ borderColor: circleColor }}
                 title={sectionType}
               >
                 {sectionType}
+                {repeatNumber && (
+                  <>
+                    {/* White overlay to create gap effect */}
+                    <div 
+                      className="absolute bg-white"
+                      style={{
+                        top: '-1px',
+                        right: '-1px',
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '0 50% 0 0'
+                      }}
+                    />
+                    <div 
+                      className="absolute top-0 right-0 flex items-center justify-center text-xs font-bold"
+                      style={{
+                        color: "black",
+                        fontSize: "0.7rem",
+                        transform: "translate(25%, -25%)",
+                        zIndex: 10
+                      }}
+                    >
+                      {repeatNumber}
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}

@@ -188,6 +188,13 @@
     letter-spacing: normal !important;
   }
   
+  /* Normalize chord display consistency in print mode only */
+  .chord-section .text-sm,
+  .chord-section .absolute.text-sm,
+  span.absolute.text-sm.font-bold {
+    font-size: 0.875rem !important;
+  }
+  
   /* Preserve chord-lyric container structure */
   .chord-section,
   .chord-lyric-container {
@@ -211,6 +218,22 @@
   
   .minimalist-chart .two-column-grid {
     margin-top: 2rem !important;
+  }
+  
+  /* Ensure repeat numbers are visible and styled in print - only for sequence numbers */
+  .songchart .relative > .absolute,
+  .minimalist-chart .sequence-item > .absolute {
+    color: black !important;
+    font-weight: bold !important;
+    font-size: 0.7rem !important;
+    transform: translate(25%, -25%) !important;
+  }
+  
+  /* Support for gapped circle effect in print */
+  .songchart .bg-white,
+  .minimalist-chart .bg-white {
+    background-color: white !important;
+    z-index: 5 !important;
   }
 }
 

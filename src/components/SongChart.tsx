@@ -178,7 +178,7 @@ const SongChart: React.FC<SongChartProps> = ({
       </div>
 
       {/* Section Sequence */}
-      <SectionSequence sequence={song.sectionSequence} />
+      <SectionSequence sequence={song.sectionSequence} sections={song.sections} />
 
       {/* Song Content */}
       <div className={`grid ${layout === LayoutType.TWO_COLUMN ? 'grid-cols-2 gap-8 two-column-grid' : 'grid-cols-1'}`}>
