@@ -55,8 +55,20 @@ const Index = () => {
   }, []);
 
   const handlePrint = useCallback(() => {
+    // Guardar el título original
+    const originalTitle = document.title;
+    
+    // Cambiar el título temporalmente para la impresión
+    document.title = `${songData.title} - ${songData.artist}`;
+    
+    // Imprimir
     window.print();
-  }, []);
+    
+    // Restaurar el título original después de un breve retraso
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 100);
+  }, [songData.title, songData.artist]);
 
   const handleDisplayModeChange = (value: string) => {
     setShowChords(value === 'chords-lyrics');

@@ -159,6 +159,12 @@ const SongChart: React.FC<SongChartProps> = ({
             page-break-inside: avoid !important;
             margin-bottom: 1rem !important;
           }
+          
+          /* Print styles for page header */
+          .songchart .text-gray-500 {
+            color: #6b7280 !important;
+            font-weight: 600 !important;
+          }
         }
         `}
       </style>
@@ -169,11 +175,13 @@ const SongChart: React.FC<SongChartProps> = ({
           <h1 className="text-3xl font-bold">{song.title}</h1>
           <div className="text-lg">{song.artist}</div>
         </div>
-        <div className="text-right">
-          <div>Página: {currentPage}/{maxPage}</div>
-          <div>Tono: {song.key}</div>
-          <div>Tempo: {song.tempo}</div>
-          <div>Time: {song.timeSignature}</div>
+        <div className="text-right text-sm text-gray-500 song-header-info">
+          <div><span className="font-semibold">Página:</span> <span className="font-normal">{currentPage}/{maxPage}</span></div>
+          <div>
+            <span className="font-semibold">Tono:</span> <span className="font-normal">{song.key}</span> &nbsp;&nbsp; 
+            <span className="font-semibold">Tempo:</span> <span className="font-normal">{song.tempo}</span> &nbsp;&nbsp; 
+            <span className="font-semibold">Time:</span> <span className="font-normal">{song.timeSignature}</span>
+          </div>
         </div>
       </div>
 

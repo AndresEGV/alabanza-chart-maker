@@ -189,6 +189,12 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
           .page-break {
             page-break-after: always;
           }
+          
+          /* Print styles for page header */
+          .minimalist-chart .page-header .text-gray-500 {
+            color: #6b7280 !important;
+            font-weight: 600 !important;
+          }
         }
         `}
       </style>
@@ -200,11 +206,13 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
             <h1 className="text-3xl font-bold">{song.title}</h1>
             <div className="text-lg">{song.artist}</div>
           </div>
-          <div className="text-right">
-            <div>Página: {pageText}</div>
-            <div>Tono: {song.key}</div>
-            <div>Tempo: {song.tempo}</div>
-            <div>Time: {song.timeSignature}</div>
+          <div className="text-right text-sm text-gray-500 song-header-info">
+            <div><span className="font-semibold">Página:</span> <span className="font-normal">{pageText}</span></div>
+            <div>
+              <span className="font-semibold">Tono:</span> <span className="font-normal">{song.key}</span> &nbsp;&nbsp; 
+              <span className="font-semibold">Tempo:</span> <span className="font-normal">{song.tempo}</span> &nbsp;&nbsp; 
+              <span className="font-semibold">Time:</span> <span className="font-normal">{song.timeSignature}</span>
+            </div>
           </div>
         </div>
 
