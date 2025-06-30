@@ -273,6 +273,21 @@
     background-color: white !important;
     z-index: 5 !important;
   }
+  
+  /* Increase size and weight of song lyrics in print */
+  .chord-section .text-base,
+  .chord-lyric-container .text-base,
+  .minimalist-chart .lyric {
+    font-size: 1.10rem !important; /* Aumentar ligeramente de 1rem */
+    font-weight: 500 !important; /* Aumentar grosor pero no tanto como los acordes */
+  }
+  
+  /* Maintain chord size for proper proportion */
+  .chord-section .absolute.text-sm.font-bold,
+  span.absolute.text-sm.font-bold {
+    font-size: 0.895rem !important; /* Mantener tamaño actual de acordes */
+    font-weight: 700 !important; /* Mantener grosor bold para acordes */
+  }
 }
 
 /* Compact chord-lyric spacing */
