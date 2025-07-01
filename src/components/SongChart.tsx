@@ -21,7 +21,11 @@ const SongChart: React.FC<SongChartProps> = ({
 
   // If minimalist layout is selected, use the MinimalistSongChart component
   if (layout === LayoutType.MINIMALIST) {
-    return <MinimalistSongChart song={song} showChords={showChords} />;
+    return (
+      <div className="bg-white text-black">
+        <MinimalistSongChart song={song} showChords={showChords} />
+      </div>
+    );
   }
 
   // Function to organize sections for layout display

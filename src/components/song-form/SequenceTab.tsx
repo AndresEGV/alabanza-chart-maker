@@ -68,7 +68,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, section, onRemove }) =>
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 px-3 py-2 bg-white border-2 rounded-lg shadow-sm transition-all hover:shadow-md cursor-grab hover:cursor-grabbing ${
+      className={`flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border-2 dark:border-gray-700 rounded-lg shadow-sm transition-all hover:shadow-md cursor-grab hover:cursor-grabbing ${
         isDragging ? "opacity-50 z-50 shadow-lg cursor-grabbing" : ""
       } min-w-[120px] touch-none`}
       {...attributes}
@@ -76,7 +76,7 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, section, onRemove }) =>
     >
       <GripVertical className="h-4 w-4 text-gray-400 pointer-events-none" />
       <div
-        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold"
+        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-gray-900"
         style={{ 
           backgroundColor: "white",
           borderWidth: "2px",
@@ -222,16 +222,16 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
             </div>
 
             {/* Draggable sequence */}
-            <div className={`p-4 bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-lg border-2 border-dashed transition-all ${
-              sequence.length === 0 ? "border-gray-300" : "border-gray-200"
+            <div className={`p-4 bg-gradient-to-br from-gray-50 to-gray-100/50 dark:from-gray-800 dark:to-gray-900/50 rounded-lg border-2 border-dashed transition-all ${
+              sequence.length === 0 ? "border-gray-300 dark:border-gray-600" : "border-gray-200 dark:border-gray-700"
             } ${sequence.length < 4 ? "min-h-[80px]" : "min-h-[120px]"}`}>
               {sequence.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-4">
-                  <Music className="h-8 w-8 text-gray-300 mb-2" />
-                  <p className="text-center text-gray-400 text-sm font-medium">
+                  <Music className="h-8 w-8 text-gray-300 dark:text-gray-600 mb-2" />
+                  <p className="text-center text-gray-400 dark:text-gray-500 text-sm font-medium">
                     Haz clic en las secciones disponibles para comenzar
                   </p>
-                  <p className="text-center text-gray-400 text-xs mt-1">
+                  <p className="text-center text-gray-400 dark:text-gray-500 text-xs mt-1">
                     o arrastra para reordenar
                   </p>
                 </div>
@@ -262,7 +262,7 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
                       <div className="flex items-center gap-2 px-3 py-2 bg-white border-2 rounded-lg shadow-2xl transform rotate-3">
                         <GripVertical className="h-4 w-4 text-gray-400" />
                         <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-gray-900"
                           style={{ 
                             backgroundColor: "white",
                             borderWidth: "2px",
@@ -280,7 +280,7 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
             </div>
 
             {/* Available sections */}
-            <div className="mt-4 p-4 border rounded-md bg-slate-50">
+            <div className="mt-4 p-4 border rounded-md bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
               <div className="font-semibold mb-2">Secciones disponibles:</div>
               <div className="flex flex-wrap gap-2">
                 {availableSections.map((type) => {
@@ -295,10 +295,10 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
                         <button
                           type="button"
                           onClick={() => addSection(type)}
-                          className="group flex items-center gap-1 px-3 py-2 bg-white border-2 border-gray-200 rounded-lg hover:shadow-md hover:border-gray-300 hover:scale-105 transition-all duration-200 cursor-pointer"
+                          className="group flex items-center gap-1 px-3 py-2 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 hover:scale-105 transition-all duration-200 cursor-pointer"
                         >
                           <div
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold text-gray-900"
                             style={{ 
                               backgroundColor: "white",
                               borderWidth: "2px",
@@ -333,7 +333,7 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
               placeholder="I V1 C1 V2 C1 B F"
             />
             
-            <div className="mt-4 p-4 border rounded-md bg-slate-50">
+            <div className="mt-4 p-4 border rounded-md bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
               <div className="font-semibold mb-2">Secciones disponibles:</div>
               <div className="flex flex-wrap gap-2">
                 {availableSections.map((type) => (

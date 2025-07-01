@@ -32,7 +32,7 @@ const SectionNotes: React.FC<SectionNotesProps> = ({
         <Label>Notas de sección</Label>
         <div className="flex gap-2">
           <select
-            className="border rounded p-2"
+            className="border rounded p-2 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100"
             value={newNote.position}
             onChange={(e) => setNewNote((prev) => ({ ...prev, position: e.target.value as "left" | "right" }))}
           >

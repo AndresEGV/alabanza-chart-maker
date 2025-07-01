@@ -4,6 +4,7 @@ import SongForm from '@/components/SongForm';
 import SongChart from '@/components/SongChart';
 import { ChordTransposer } from '@/components/ChordTransposer';
 import { KeyboardShortcutsHelp } from '@/components/KeyboardShortcutsHelp';
+import ThemeToggle from '@/components/ThemeToggle';
 import { LayoutType, SongData } from '@/types/song';
 import { createEmptySong, getSampleSongData } from '@/utils/songTemplates';
 import { transposeSong, calculateTargetKey, getIntervalName } from '@/utils/simpleTransposer';
@@ -165,7 +166,7 @@ const Index = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-200">
       <style>
         {`
         /* Ensure consistent monospace font across environments */
@@ -209,11 +210,18 @@ const Index = () => {
         `}
       </style>
       <div className="container max-w-7xl mx-auto px-4 print:p-0">
-        <div className="mb-8 text-center print:hidden">
-          <h1 className="text-4xl font-bold mb-2">Alabanza Chart Maker</h1>
-          <p className="text-xl text-gray-600">
-            Crea y personaliza guías de alabanza profesionales
-          </p>
+        <div className="mb-8 print:hidden">
+          <div className="flex items-center justify-between">
+            <div className="text-center flex-1">
+              <h1 className="text-4xl font-bold mb-2">Alabanza Chart Maker</h1>
+              <p className="text-xl text-gray-600 dark:text-gray-400">
+                Crea y personaliza guías de alabanza profesionales
+              </p>
+            </div>
+            <div className="ml-4">
+              <ThemeToggle />
+            </div>
+          </div>
         </div>
 
         {isEditing ? (
