@@ -1,10 +1,10 @@
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { SectionType, SongData, ChordLyricLine } from "@/types/song";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Info } from "lucide-react";
+import { Info, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 import SectionSelector from "./SectionSelector";
 import SectionNotes from "./SectionNotes";
 import { parseChordLyricTextInput } from "@/utils/chordParser";
@@ -35,6 +35,7 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
   onDeleteNote,
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [showHelp, setShowHelp] = useState(false);
   
   const handleFormat = (format: 'bold' | 'italic') => {
     const textarea = textareaRef.current;
@@ -148,10 +149,15 @@ const SectionsTab: React.FC<SectionsTabProps> = ({
             <Label htmlFor="sectionText">Acordes y Letra</Label>
             <FormatToolbar onFormat={handleFormat} />
           </div>
-          <div className="flex items-center text-xs text-muted-foreground">
-            <Info className="h-4 w-4 mr-1" />
-            <span>Escribir acordes en una línea y letra en la siguiente</span>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowHelp(!showHelp)}
+            className="flex items-center text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <HelpCircle className="h-4 w-4 mr-1" />
+            <span>Ayuda</span>
+            {showHelp ? <ChevronUp className="h-3 w-3 ml-1" /> : <ChevronDown className="h-3 w-3 ml-1" />}
+          </button>
         </div>
         
         <ScrollArea className="h-96 border rounded-md p-4">
@@ -183,26 +189,53 @@ Que venció`}
           />
         </ScrollArea>
         
+        {/* Collapsible Help Section */}
+        {showHelp && (
+          <div className="text-sm bg-blue-50 border border-blue-200 rounded-lg p-4 mt-2 space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Column 1: Basic Instructions */}
+              <div>
+                <h4 className="font-medium text-blue-900 mb-2 flex items-center">
+                  <Info className="h-4 w-4 mr-1" />
+                  Instrucciones básicas
+                </h4>
+                <ul className="space-y-1 text-xs">
+                  <li>• Escribir acordes en una línea y letra en la siguiente</li>
+                  <li>• La ubicación exacta de acordes se mantiene en la guía</li>
+                  <li>• Usa los botones de formato o markdown</li>
+                </ul>
+                
+                <div className="mt-3 p-2 bg-white border border-blue-100 rounded">
+                  <p className="font-mono text-xs">C         G2/B  Em7  D</p>
+                  <p className="font-mono text-xs">Se postran adorarle</p>
+                </div>
+              </div>
+              
+              {/* Column 2: Format & Repetitions */}
+              <div>
+                <h4 className="font-medium text-blue-900 mb-2">Formato y Repeticiones</h4>
+                <div className="space-y-2 text-xs">
+                  <div>
+                    <span className="font-medium">Formato:</span>
+                    <ul className="ml-2 mt-1">
+                      <li>• **negrita**, _cursiva_, **_ambos_**</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <span className="font-medium">Repeticiones:</span>
+                    <ul className="ml-2 mt-1">
+                      <li>• Agrega X2, X3, X4 en cualquier línea</li>
+                      <li>• Aparecerá en el círculo de la sección</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Preview the chord-lyric parsing to help users understand how it will render */}
         {sectionText[activeSectionTab]?.trim() && previewParsedLines()}
-        
-        <div className="text-sm bg-yellow-50 border border-yellow-200 rounded p-4 mt-2">
-          <p className="font-medium text-amber-700">⚠️ Importante:</p>
-          <p>Para mantener la alineación precisa de acordes sobre letras:</p>
-          <div className="mt-2 p-2 bg-white border rounded">
-            <p className="font-mono text-xs text-gray-500">// Ejemplo de posicionamiento:</p>
-            <p className="font-mono">C            G2</p>
-            <p className="font-mono">Se postran adorarle</p>
-          </div>
-          <p className="mt-1">La ubicación exacta de cada acorde en el editor se mantendrá de forma idéntica en la guía generada.</p>
-          <div className="mt-3 pt-3 border-t border-yellow-200">
-            <p className="font-medium text-amber-700">Formato de texto:</p>
-            <p className="mt-1">• Negrita: **texto en negrita**</p>
-            <p>• Cursiva: _texto en cursiva_</p>
-            <p>• Negrita y cursiva: **_texto_** o _**texto**_</p>
-            <p className="mt-2 text-xs">Selecciona el texto y usa los botones para aplicar/quitar formato</p>
-          </div>
-        </div>
       </div>
     </div>
   );

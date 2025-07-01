@@ -72,33 +72,37 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
           font-family: 'Courier New', monospace !important;
           letter-spacing: 0;
           white-space: pre;
+          font-size: 1.05rem;
+          font-weight: 500;
         }
         
         .minimalist-chart .section-container {
           border: 1px solid #e5e7eb;
           border-radius: 0.5rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem;
           position: relative;
-          overflow: hidden;
+          overflow: visible;
+          padding-top: 0.25rem;
         }
         
         .minimalist-chart .section-header {
           display: flex;
           align-items: center;
-          border-bottom: 1px solid #f3f4f6;
-          padding-bottom: 0.5rem;
-          margin-bottom: 0.5rem;
+          justify-content: space-between;
+          /* Quitamos la línea divisoria */
+          padding-bottom: 0.125rem;
+          margin-bottom: 0.125rem;
         }
         
         .minimalist-chart .section-circle {
-          width: 2rem;
-          height: 2rem;
+          width: 1.5rem;
+          height: 1.5rem;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 600;
-          font-size: 0.875rem;
+          font-size: 0.75rem;
           background-color: white;
           border-width: 2px;
           border-style: solid;
@@ -117,6 +121,7 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
           font-style: italic;
           font-size: 0.625rem;
           color: #6b7280;
+          line-height: 1.2;
         }
         
         .minimalist-chart .chord-diagram {
@@ -140,14 +145,14 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
         }
         
         .minimalist-chart .sequence-item {
-          width: 2rem;
-          height: 2rem;
+          width: 1.75rem;
+          height: 1.75rem;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 600;
-          font-size: 0.875rem;
+          font-size: 0.8rem;
           background-color: white;
           border-width: 2px;
           border-style: solid;
@@ -194,6 +199,17 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
           .minimalist-chart .page-header .text-gray-500 {
             color: #6b7280 !important;
             font-weight: 600 !important;
+          }
+          
+          /* Forzar división de líneas en notas de sección */
+          .minimalist-chart .section-notes-container {
+            max-width: 100% !important;
+            white-space: normal !important;
+          }
+          
+          .minimalist-chart .section-notes-container div {
+            white-space: normal !important;
+            word-break: break-word !important;
           }
         }
         `}
@@ -259,8 +275,8 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
                       style={{
                         top: '-1px',
                         right: '-1px',
-                        width: '12px',
-                        height: '12px',
+                        width: '11px',
+                        height: '11px',
                         borderRadius: '0 50% 0 0'
                       }}
                     />
@@ -268,8 +284,8 @@ const MinimalistSongChart: React.FC<MinimalistSongChartProps> = ({
                       className="absolute top-0 right-0 flex items-center justify-center text-xs font-bold"
                       style={{
                         color: "black",
-                        fontSize: "0.7rem",
-                        transform: "translate(25%, -25%)",
+                        fontSize: "0.65rem",
+                        transform: "translate(22%, -22%)",
                         zIndex: 10
                       }}
                     >

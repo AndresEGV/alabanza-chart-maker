@@ -278,15 +278,44 @@
   .chord-section .text-base,
   .chord-lyric-container .text-base,
   .minimalist-chart .lyric {
-    font-size: 1.10rem !important; /* Aumentar ligeramente de 1rem */
-    font-weight: 500 !important; /* Aumentar grosor pero no tanto como los acordes */
+    font-size: 1.110rem !important; /* Aumentar más el tamaño */
+    font-weight: 900 !important; /* Más peso para mejor legibilidad */
   }
   
   /* Maintain chord size for proper proportion */
   .chord-section .absolute.text-sm.font-bold,
   span.absolute.text-sm.font-bold {
-    font-size: 0.895rem !important; /* Mantener tamaño actual de acordes */
+    font-size: 0.930rem !important; /* Mantener tamaño actual de acordes */
     font-weight: 700 !important; /* Mantener grosor bold para acordes */
+  }
+  
+  /* Asegurar que las notas de sección se dividan correctamente en impresión */
+  .minimalist-chart .section-notes-container {
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+  
+  .minimalist-chart .section-notes-container div {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    max-width: 100% !important;
+    display: block !important;
+  }
+  
+  /* Forzar que el header mantenga su estructura */
+  .minimalist-chart .section-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+  }
+  
+  /* Mantener el ancho del contenedor de notas */
+  .minimalist-chart .section-container {
+    overflow: visible !important;
+    width: 100% !important;
   }
 }
 
