@@ -68,28 +68,35 @@ const SortableItem: React.FC<SortableItemProps> = ({ id, section, onRemove }) =>
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border-2 dark:border-gray-700 rounded-lg shadow-sm transition-all hover:shadow-md cursor-grab hover:cursor-grabbing ${
-        isDragging ? "opacity-50 z-50 shadow-lg cursor-grabbing" : ""
+      className={`flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 border-2 dark:border-gray-700 rounded-lg shadow-sm transition-all hover:shadow-md ${
+        isDragging ? "opacity-50 z-50 shadow-lg" : ""
       } min-w-[120px] touch-none`}
-      {...attributes}
-      {...listeners}
     >
-      <GripVertical className="h-4 w-4 text-gray-400 pointer-events-none" />
-      <div
-        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-gray-900"
-        style={{ 
-          backgroundColor: "white",
-          borderWidth: "2px",
-          borderStyle: "solid",
-          borderColor: sectionColor 
-        }}
+      <div 
+        className="flex items-center gap-2 cursor-grab hover:cursor-grabbing"
+        {...attributes}
+        {...listeners}
       >
-        {section}
+        <GripVertical className="h-4 w-4 text-gray-400 pointer-events-none" />
+        <div
+          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-gray-900"
+          style={{ 
+            backgroundColor: "white",
+            borderWidth: "2px",
+            borderStyle: "solid",
+            borderColor: sectionColor 
+          }}
+        >
+          {section}
+        </div>
       </div>
       <Tooltip>
         <TooltipTrigger asChild>
           <button
-            onClick={onRemove}
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
             className="ml-auto p-1 hover:bg-red-50 hover:text-red-600 rounded transition-all duration-200"
             type="button"
           >
@@ -110,9 +117,7 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
   availableSections,
 }) => {
   const [useVisualMode, setUseVisualMode] = useState(true);
-  const [sequence, setSequence] = useState<string[]>(
-    sequenceInput ? sequenceInput.split(" ").filter(s => s.trim()) : []
-  );
+  const sequence = sequenceInput ? sequenceInput.split(" ").filter(s => s.trim()) : [];
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -130,33 +135,28 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      setSequence((items) => {
-        // Find indices based on the full ID (including index)
-        const activeId = active.id as string;
-        const overId = over.id as string;
-        
-        const oldIndex = items.findIndex((item, idx) => `${item}-${idx}` === activeId);
-        const newIndex = items.findIndex((item, idx) => `${item}-${idx}` === overId);
-        
-        if (oldIndex === -1 || newIndex === -1) return items;
-        
-        const newSequence = arrayMove(items, oldIndex, newIndex);
-        
-        // Update the text input
-        const syntheticEvent = {
-          target: { value: newSequence.join(" ") },
-        } as React.ChangeEvent<HTMLInputElement>;
-        onSequenceChange(syntheticEvent);
-        
-        return newSequence;
-      });
+      // Extract index from item-{index} format
+      const activeId = active.id as string;
+      const overId = over.id as string;
+      
+      const oldIndex = parseInt(activeId.replace('item-', ''));
+      const newIndex = parseInt(overId.replace('item-', ''));
+      
+      if (isNaN(oldIndex) || isNaN(newIndex)) return;
+      
+      const newSequence = arrayMove(sequence, oldIndex, newIndex);
+      
+      // Update the text input
+      const syntheticEvent = {
+        target: { value: newSequence.join(" ") },
+      } as React.ChangeEvent<HTMLInputElement>;
+      onSequenceChange(syntheticEvent);
     }
     setActiveId(null);
   };
 
   const addSection = (section: string) => {
     const newSequence = [...sequence, section];
-    setSequence(newSequence);
     
     // Update the text input
     const syntheticEvent = {
@@ -167,7 +167,6 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
 
   const removeSection = (index: number) => {
     const newSequence = sequence.filter((_, i) => i !== index);
-    setSequence(newSequence);
     
     // Update the text input
     const syntheticEvent = {
@@ -178,8 +177,6 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onSequenceChange(e);
-    const newSequence = e.target.value.split(" ").filter(s => s.trim());
-    setSequence(newSequence);
   };
 
   return (
@@ -243,14 +240,14 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
                   onDragEnd={handleDragEnd}
                 >
                   <SortableContext
-                    items={sequence.map((_, index) => `${sequence[index]}-${index}`)}
+                    items={sequence.map((_, index) => `item-${index}`)}
                     strategy={rectSortingStrategy}
                   >
                     <div className="flex flex-wrap gap-2">
                       {sequence.map((section, index) => (
                         <SortableItem
-                          key={`${section}-${index}`}
-                          id={`${section}-${index}`}
+                          key={`item-${index}`}
+                          id={`item-${index}`}
                           section={section}
                           onRemove={() => removeSection(index)}
                         />
@@ -267,10 +264,10 @@ const SequenceTab: React.FC<SequenceTabProps> = ({
                             backgroundColor: "white",
                             borderWidth: "2px",
                             borderStyle: "solid",
-                            borderColor: defaultSectionColors[activeId.split('-')[0]] || defaultSectionColors.default
+                            borderColor: activeId ? defaultSectionColors[sequence[parseInt(activeId.replace('item-', ''))]] || defaultSectionColors.default : defaultSectionColors.default
                           }}
                         >
-                          {activeId.split('-')[0]}
+                          {activeId ? sequence[parseInt(activeId.replace('item-', ''))] : ''}
                         </div>
                       </div>
                     ) : null}
