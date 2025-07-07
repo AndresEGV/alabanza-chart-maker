@@ -26,6 +26,8 @@ dist-ssr
 *.qodo
 CLAUDE.md
 projectplan.md
+projectplan-simplified.md
+
 PERFORMANCE_ANALYSIS.md
 
 # Logs

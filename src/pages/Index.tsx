@@ -8,20 +8,34 @@ import ThemeToggle from '@/components/ThemeToggle';
 import { LayoutType, SongData } from '@/types/song';
 import { createEmptySong, getSampleSongData } from '@/utils/songTemplates';
 import { transposeSong, calculateTargetKey, getIntervalName } from '@/utils/simpleTransposer';
-// import { useAutoSave } from '@/hooks/useAutoSave'; // ELIMINADO
+import { useAutoSave } from '@/hooks/useAutoSave';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useSongStore } from '@/stores/useSongStore';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { MusicIcon, TextIcon, KeyboardIcon } from 'lucide-react';
+import { MySongsDropdown } from '@/components/MySongsDropdown';
+import { LoginModal } from '@/components/auth/LoginModal';
 
 const Index = () => {
   const { toast } = useToast();
+  const { user } = useAuthStore();
+  const { 
+    currentSong, 
+    loadSong, 
+    createSong, 
+    updateSong,
+    setCurrentSong 
+  } = useSongStore();
+  
   const [songData, setSongData] = useState<SongData>(getSampleSongData());
   const [layout, setLayout] = useState<LayoutType>(LayoutType.TWO_COLUMN);
   const [isEditing, setIsEditing] = useState(true);
   const [showChords, setShowChords] = useState<boolean>(true);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
   // Estado para manejar transposiciones desde el original (como en ChordTransposer)
   const [originalSong, setOriginalSong] = useState<SongData>(getSampleSongData());
@@ -29,16 +43,36 @@ const Index = () => {
   
 
   // Handler functions (defined before hooks that use them)
-  const handleSongUpdate = (updatedSong: SongData) => {
+  const handleSongUpdate = async (updatedSong: SongData) => {
     // Hacer una copia profunda para la referencia original
     const originalCopy = structuredClone(updatedSong);
     setSongData(updatedSong);
     setOriginalSong(originalCopy); // Guardar una copia profunda como original
     setCurrentTransposition(0); // Reset transposition
+    
+    // Save to database if user is authenticated (silently)
+    if (user) {
+      try {
+        if (currentSong?.id) {
+          // Update existing song
+          await updateSong(currentSong.id, updatedSong);
+        } else {
+          // Create new song
+          const songId = await createSong(updatedSong, user.uid);
+          // Update current song reference but don't navigate
+          const newSong = { ...updatedSong, id: songId } as any;
+          setCurrentSong(newSong);
+        }
+      } catch (error) {
+        console.error('Error saving:', error);
+      }
+    }
+    
     toast({
       title: "Guía Actualizada",
       description: "Tu guía de alabanza ha sido actualizada exitosamente.",
     });
+    
     setIsEditing(false);
   };
 
@@ -48,12 +82,27 @@ const Index = () => {
     setSongData(newSong);
     setOriginalSong(originalCopy); // Guardar una copia profunda como original
     setCurrentTransposition(0); // Reset transposition
+    setCurrentSong(null); // Clear current song reference
     setIsEditing(true);
   };
 
   const handleEditSong = useCallback(() => {
     setIsEditing(true);
   }, []);
+
+  const handleLoadSong = async (songId: string) => {
+    try {
+      await loadSong(songId);
+      // currentSong will be updated via the store
+      setIsEditing(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "No se pudo cargar la canción",
+        variant: "destructive"
+      });
+    }
+  };
 
   const handlePrint = useCallback(() => {
     // Guardar el título original
@@ -149,6 +198,35 @@ const Index = () => {
     enabled: true
   });
 
+  // Initialize with sample song for new users
+  useEffect(() => {
+    if (!user && !currentSong) {
+      const sampleSong = getSampleSongData();
+      setSongData(sampleSong);
+      setOriginalSong(structuredClone(sampleSong));
+    }
+  }, [user, currentSong]);
+
+  // Update local state when currentSong changes
+  useEffect(() => {
+    if (currentSong) {
+      setSongData(currentSong);
+      setOriginalSong(structuredClone(currentSong));
+      setCurrentTransposition(0);
+    }
+  }, [currentSong]);
+
+  // Auto-save hook (silent)
+  useAutoSave(songData, {
+    enabled: !!user && isEditing,
+    onSave: () => {
+      // Silent save
+    },
+    onError: (error) => {
+      console.error('AutoSave error:', error);
+    }
+  });
+
   // Load showChords preference from localStorage
   useEffect(() => {
     const savedShowChords = localStorage.getItem('showChords');
@@ -156,8 +234,6 @@ const Index = () => {
       setShowChords(savedShowChords === 'true');
     }
   }, []);
-
-  // Autoguardado eliminado
 
   // Save showChords preference to localStorage when it changes
   useEffect(() => {
@@ -211,16 +287,19 @@ const Index = () => {
       </style>
       <div className="container max-w-7xl mx-auto px-4 print:p-0">
         <div className="mb-8 print:hidden">
-          <div className="flex items-center justify-between">
-            <div className="text-center flex-1">
-              <h1 className="text-4xl font-bold mb-2">Alabanza Chart Maker</h1>
-              <p className="text-xl text-gray-600 dark:text-gray-400">
-                Crea y personaliza guías de alabanza profesionales
-              </p>
-            </div>
-            <div className="ml-4">
-              <ThemeToggle />
-            </div>
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            <MySongsDropdown
+              onNewSong={handleNewSong}
+              onLoadSong={handleLoadSong}
+              onSaveClick={() => setShowLoginModal(true)}
+            />
+            <ThemeToggle />
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-2">Alabanza Chart Maker</h1>
+            <p className="text-xl text-gray-600 dark:text-gray-400">
+              Crea y personaliza guías de alabanza profesionales
+            </p>
           </div>
         </div>
 
@@ -297,6 +376,13 @@ const Index = () => {
           </>
         )}
       </div>
+      
+      {showLoginModal && (
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+        />
+      )}
     </div>
   );
 };

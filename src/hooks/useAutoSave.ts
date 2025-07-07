@@ -1,134 +1,125 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef } from 'react';
 import { SongData } from '@/types/song';
+import { useSongStore } from '@/stores/useSongStore';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { toast } from 'sonner';
+import { debounce } from '@/utils/debounce';
 
 interface UseAutoSaveOptions {
-  delay?: number; // Delay in milliseconds (default: 30000 = 30 seconds)
-  key?: string; // localStorage key (default: 'autosaved-song')
-  enabled?: boolean; // Whether autosave is enabled (default: true)
+  enabled?: boolean;
+  delay?: number;
+  onSave?: () => void;
+  onError?: (error: Error) => void;
 }
 
 export function useAutoSave(
-  data: SongData,
+  songData: SongData | null,
   options: UseAutoSaveOptions = {}
 ) {
   const {
+    enabled = true,
     delay = 30000, // 30 seconds
-    key = 'autosaved-song',
-    enabled = true
+    onSave,
+    onError,
   } = options;
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const lastSavedRef = useRef<string>('');
+  const { user } = useAuthStore();
+  const { 
+    currentSong, 
+    saveDraft, 
+    updateSong, 
+    autoSaveEnabled,
+    setHasUnsavedChanges 
+  } = useSongStore();
+  
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const lastSavedDataRef = useRef<string>('');
 
-  const saveToLocalStorage = useCallback((songData: SongData) => {
-    try {
-      const dataToSave = {
-        ...songData,
-        lastAutoSaved: new Date().toISOString()
-      };
-      localStorage.setItem(key, JSON.stringify(dataToSave));
-      console.log('✅ Autoguardado exitoso:', new Date().toLocaleTimeString());
-    } catch (error) {
-      console.error('❌ Error en autoguardado:', error);
-    }
-  }, [key]);
+  // Debounced save function
+  const debouncedSave = useRef(
+    debounce(async (data: SongData) => {
+      if (!user || !data || !enabled || !autoSaveEnabled) return;
 
-  const scheduleAutoSave = useCallback((songData: SongData) => {
-    if (!enabled) return;
+      try {
+        const dataString = JSON.stringify(data);
+        
+        // Don't save if data hasn't changed
+        if (dataString === lastSavedDataRef.current) {
+          return;
+        }
 
-    // Clear existing timeout
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+        // If we have a current song (already saved), update it
+        if (currentSong?.id && !currentSong.isDraft) {
+          await updateSong(currentSong.id, data);
+        } else {
+          // Otherwise save as draft
+          await saveDraft(data, user.uid);
+        }
 
-    // Check if data has actually changed
-    const currentDataString = JSON.stringify(songData);
-    if (currentDataString === lastSavedRef.current) {
-      return; // No changes, don't save
-    }
+        lastSavedDataRef.current = dataString;
+        setHasUnsavedChanges(false);
+        onSave?.();
+        
+      } catch (error) {
+        console.error('Autosave error:', error);
+        onError?.(error as Error);
+        toast.error('Error al guardar automáticamente');
+      }
+    }, 2000) // 2 second debounce
+  ).current;
 
-    // Schedule new autosave
-    timeoutRef.current = setTimeout(() => {
-      saveToLocalStorage(songData);
-      lastSavedRef.current = currentDataString;
-    }, delay);
-  }, [enabled, delay, saveToLocalStorage]);
-
-  // Auto-save when data changes
+  // Effect for periodic saves
   useEffect(() => {
-    scheduleAutoSave(data);
+    if (!songData || !enabled || !autoSaveEnabled || !user) return;
 
-    // Cleanup timeout on unmount
+    // Clear any existing timeout
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Set up periodic save
+    saveTimeoutRef.current = setInterval(() => {
+      debouncedSave(songData);
+    }, delay);
+
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (saveTimeoutRef.current) {
+        clearInterval(saveTimeoutRef.current);
       }
     };
-  }, [data, scheduleAutoSave]);
+  }, [songData, enabled, autoSaveEnabled, delay, user]);
 
-  // Manual save function
-  const saveNow = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  // Effect for immediate save on data change
+  useEffect(() => {
+    if (!songData || !enabled || !autoSaveEnabled || !user) return;
+
+    const dataString = JSON.stringify(songData);
+    if (dataString !== lastSavedDataRef.current) {
+      setHasUnsavedChanges(true);
+      debouncedSave(songData);
     }
-    saveToLocalStorage(data);
-    lastSavedRef.current = JSON.stringify(data);
-  }, [data, saveToLocalStorage]);
+  }, [songData, enabled, autoSaveEnabled, user]);
 
-  // Load autosaved data
-  const loadAutoSaved = useCallback((): SongData | null => {
-    try {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        // Remove the lastAutoSaved property before returning
-        const { lastAutoSaved, ...songData } = parsed;
-        return songData as SongData;
+  // Save on unmount
+  useEffect(() => {
+    return () => {
+      if (songData && enabled && autoSaveEnabled && user) {
+        // Force immediate save on unmount
+        debouncedSave.cancel();
+        const dataString = JSON.stringify(songData);
+        if (dataString !== lastSavedDataRef.current) {
+          saveDraft(songData, user.uid);
+        }
       }
-    } catch (error) {
-      console.error('Error loading autosaved data:', error);
-    }
-    return null;
-  }, [key]);
-
-  // Check if there's autosaved data
-  const hasAutoSaved = useCallback((): boolean => {
-    try {
-      return localStorage.getItem(key) !== null;
-    } catch {
-      return false;
-    }
-  }, [key]);
-
-  // Clear autosaved data
-  const clearAutoSaved = useCallback(() => {
-    try {
-      localStorage.removeItem(key);
-    } catch (error) {
-      console.error('Error clearing autosaved data:', error);
-    }
-  }, [key]);
-
-  // Get last autosave time
-  const getLastAutoSaveTime = useCallback((): Date | null => {
-    try {
-      const saved = localStorage.getItem(key);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return parsed.lastAutoSaved ? new Date(parsed.lastAutoSaved) : null;
-      }
-    } catch (error) {
-      console.error('Error getting last autosave time:', error);
-    }
-    return null;
-  }, [key]);
+    };
+  }, []);
 
   return {
-    saveNow,
-    loadAutoSaved,
-    hasAutoSaved,
-    clearAutoSaved,
-    getLastAutoSaveTime,
-    isEnabled: enabled
+    saveNow: () => {
+      if (songData && user) {
+        debouncedSave(songData);
+      }
+    },
+    lastSaved: lastSavedDataRef.current ? new Date() : null,
   };
 }
