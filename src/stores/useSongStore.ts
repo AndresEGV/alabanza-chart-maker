@@ -8,8 +8,7 @@ import {
   updateDoc, 
   deleteDoc, 
   query, 
-  where, 
-  orderBy,
+  where,
   serverTimestamp,
   Timestamp
 } from 'firebase/firestore';
@@ -66,25 +65,54 @@ export const useSongStore = create<SongState>((set, get) => ({
   fetchUserSongs: async (userId) => {
     set({ loading: true, error: null });
     try {
-      const q = query(
+      // Consulta 1: Canciones con isDraft = false
+      const q1 = query(
         collection(db, 'songs'),
         where('userId', '==', userId),
-        where('isDraft', '!=', true),
-        orderBy('updatedAt', 'desc')
+        where('isDraft', '==', false)
       );
       
-      const querySnapshot = await getDocs(q);
-      const songs: SavedSong[] = [];
+      // Consulta 2: Canciones sin el campo isDraft (canciones antiguas)
+      const q2 = query(
+        collection(db, 'songs'),
+        where('userId', '==', userId)
+      );
       
-      querySnapshot.forEach((doc) => {
+      const [querySnapshot1, querySnapshot2] = await Promise.all([
+        getDocs(q1),
+        getDocs(q2)
+      ]);
+      
+      const songsMap = new Map<string, SavedSong>();
+      
+      // Agregar canciones con isDraft = false
+      querySnapshot1.forEach((doc) => {
         const data = doc.data();
-        songs.push({
+        songsMap.set(doc.id, {
           ...data,
           id: doc.id,
           createdAt: data.createdAt?.toDate() || new Date(),
           updatedAt: data.updatedAt?.toDate() || new Date(),
         } as SavedSong);
       });
+      
+      // Agregar canciones sin isDraft o donde isDraft no sea true
+      querySnapshot2.forEach((doc) => {
+        const data = doc.data();
+        if (!data.isDraft || data.isDraft === false) {
+          songsMap.set(doc.id, {
+            ...data,
+            id: doc.id,
+            createdAt: data.createdAt?.toDate() || new Date(),
+            updatedAt: data.updatedAt?.toDate() || new Date(),
+          } as SavedSong);
+        }
+      });
+      
+      // Convertir a array y ordenar por fecha de actualización
+      const songs = Array.from(songsMap.values()).sort(
+        (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
+      );
       
       set({ songs, loading: false });
     } catch (error: any) {

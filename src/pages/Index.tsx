@@ -19,6 +19,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { MusicIcon, TextIcon, KeyboardIcon } from 'lucide-react';
 import { MySongsDropdown } from '@/components/MySongsDropdown';
 import { LoginModal } from '@/components/auth/LoginModal';
+import { SongLibraryModal } from '@/components/SongLibraryModal';
 
 const Index = () => {
   const { toast } = useToast();
@@ -28,7 +29,9 @@ const Index = () => {
     loadSong, 
     createSong, 
     updateSong,
-    setCurrentSong 
+    setCurrentSong,
+    deleteSong,
+    songs 
   } = useSongStore();
   
   const [songData, setSongData] = useState<SongData>(getSampleSongData());
@@ -36,6 +39,7 @@ const Index = () => {
   const [isEditing, setIsEditing] = useState(true);
   const [showChords, setShowChords] = useState<boolean>(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showLibraryModal, setShowLibraryModal] = useState(false);
   
   // Estado para manejar transposiciones desde el original (como en ChordTransposer)
   const [originalSong, setOriginalSong] = useState<SongData>(getSampleSongData());
@@ -153,6 +157,33 @@ const Index = () => {
     });
   }, [isEditing, currentTransposition, originalSong, toast]);
 
+  // Handle song deletion
+  const handleDeleteSong = async (songId: string) => {
+    try {
+      await deleteSong(songId);
+      
+      // Si se eliminó la canción actual, crear una nueva
+      if (currentSong?.id === songId) {
+        const newSong = createEmptySong();
+        setSongData(newSong);
+        setOriginalSong(structuredClone(newSong));
+        setCurrentTransposition(0);
+        setCurrentSong(null);
+      }
+      
+      toast({
+        title: "Guía eliminada",
+        description: "La guía se eliminó correctamente",
+      });
+    } catch (error) {
+      toast({
+        title: "Error al eliminar",
+        description: "No se pudo eliminar la guía",
+        variant: "destructive",
+      });
+    }
+  };
+
   // AutoSave eliminado completamente
 
   // Keyboard shortcuts
@@ -193,6 +224,16 @@ const Index = () => {
         ctrl: true,
         action: () => setShowChords(!showChords),
         description: 'Alternar vista de acordes'
+      },
+      {
+        key: 'k',
+        ctrl: true,
+        action: () => {
+          if (user) {
+            setShowLibraryModal(true);
+          }
+        },
+        description: 'Abrir biblioteca de guías'
       }
     ],
     enabled: true
@@ -292,6 +333,7 @@ const Index = () => {
               onNewSong={handleNewSong}
               onLoadSong={handleLoadSong}
               onSaveClick={() => setShowLoginModal(true)}
+              onOpenLibrary={() => setShowLibraryModal(true)}
             />
             <ThemeToggle />
           </div>
@@ -381,6 +423,17 @@ const Index = () => {
         <LoginModal
           isOpen={showLoginModal}
           onClose={() => setShowLoginModal(false)}
+        />
+      )}
+      
+      {showLibraryModal && user && (
+        <SongLibraryModal
+          isOpen={showLibraryModal}
+          onClose={() => setShowLibraryModal(false)}
+          songs={songs}
+          onSelectSong={handleLoadSong}
+          onDeleteSong={handleDeleteSong}
+          currentSongId={currentSong?.id}
         />
       )}
     </div>

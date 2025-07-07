@@ -7,22 +7,25 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, Plus, Music, LogOut, Save } from 'lucide-react';
-import { format } from 'date-fns';
+import { ChevronDown, Plus, Music, LogOut, Save, User, Library } from 'lucide-react';
+import { format, formatDistanceToNow, isToday, isYesterday, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 interface MySongsDropdownProps {
   onNewSong: () => void;
   onLoadSong: (songId: string) => void;
   onSaveClick: () => void;
+  onOpenLibrary?: () => void;
 }
 
 export const MySongsDropdown: React.FC<MySongsDropdownProps> = ({
   onNewSong,
   onLoadSong,
   onSaveClick,
+  onOpenLibrary,
 }) => {
   const { user, logout } = useAuthStore();
   const { songs, fetchUserSongs, loading } = useSongStore();
@@ -46,15 +49,50 @@ export const MySongsDropdown: React.FC<MySongsDropdownProps> = ({
     );
   }
 
+  // Obtener las iniciales del usuario
+  const getUserInitials = (email: string) => {
+    const parts = email.split('@')[0].split('.');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return email.substring(0, 2).toUpperCase();
+  };
+
+  const userInitials = getUserInitials(user.email || 'U');
+
+  // Función para obtener fecha relativa
+  const getRelativeDate = (date: Date) => {
+    if (isToday(date)) return 'Hoy';
+    if (isYesterday(date)) return 'Ayer';
+    
+    const days = differenceInDays(new Date(), date);
+    if (days < 7) return `Hace ${days} días`;
+    if (days < 30) return `Hace ${Math.floor(days / 7)} semanas`;
+    
+    return format(date, 'dd MMM', { locale: es });
+  };
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm">
-          Mis Guías
-          <ChevronDown className="ml-1 h-3 w-3" />
+        <Button variant="ghost" size="sm" className="gap-2">
+          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+            {userInitials}
+          </div>
+          <span className="hidden sm:inline-block">Mis Guías</span>
+          <ChevronDown className="h-3 w-3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user.email}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              Sesión iniciada
+            </p>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onNewSong}>
           <Plus className="mr-2 h-4 w-4" />
           Nueva Guía
@@ -72,7 +110,8 @@ export const MySongsDropdown: React.FC<MySongsDropdownProps> = ({
           </DropdownMenuItem>
         ) : (
           <>
-            {songs.slice(0, 10).map((song) => (
+            {/* Mostrar solo las 5 canciones más recientes */}
+            {songs.slice(0, 5).map((song) => (
               <DropdownMenuItem
                 key={song.id}
                 onClick={() => {
@@ -85,17 +124,37 @@ export const MySongsDropdown: React.FC<MySongsDropdownProps> = ({
                 <div className="flex-1 overflow-hidden">
                   <div className="font-medium text-sm truncate">{song.title}</div>
                   <div className="text-xs text-muted-foreground">
-                    {format(song.updatedAt, 'dd MMM', { locale: es })}
+                    {getRelativeDate(song.updatedAt)}
                   </div>
                 </div>
               </DropdownMenuItem>
             ))}
-            {songs.length > 10 && (
-              <DropdownMenuItem disabled>
-                <span className="text-xs text-muted-foreground">
-                  +{songs.length - 10} más
-                </span>
-              </DropdownMenuItem>
+            
+            {/* Opción para ver toda la biblioteca */}
+            {songs.length > 0 && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    onOpenLibrary?.();
+                    setOpen(false);
+                  }}
+                  className="cursor-pointer"
+                >
+                  <Library className="mr-2 h-4 w-4" />
+                  <span className="font-medium">Ver biblioteca completa</span>
+                  <div className="ml-auto flex items-center gap-2">
+                    {songs.length > 5 && (
+                      <span className="text-xs text-muted-foreground">
+                        {songs.length} guías
+                      </span>
+                    )}
+                    <kbd className="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground border">
+                      ⌘K
+                    </kbd>
+                  </div>
+                </DropdownMenuItem>
+              </>
             )}
           </>
         )}
