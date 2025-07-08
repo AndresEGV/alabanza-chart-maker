@@ -206,8 +206,8 @@ Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) pa
 <div align="center">
   <p>Hecho con ❤️ para la comunidad de alabanza</p>
   <p>
-    <a href="https://github.com/tu-usuario/alabanza-chart-maker">GitHub</a> •
-    <a href="https://tu-sitio-web.com">Website</a> •
-    <a href="mailto:tu-email@ejemplo.com">Contacto</a>
+    <a href="https://github.com/AndresEGV/alabanza-chart-maker">GitHub</a> •
+    <a href="https://www.linkedin.com/in/analistaprogramador-andres-gomez/">Linkedin</a> •
+    <a href="mailto:agomez.vg@gmail.com">Contacto</a>
   </p>
 </div>
