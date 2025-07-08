@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { LayoutType } from "@/types/song";
 
 interface LayoutTabProps {
-  currentLayout: LayoutType;
+  currentLayout: LayoutType | null;
   onLayoutChange: (layout: LayoutType) => void;
 }
 

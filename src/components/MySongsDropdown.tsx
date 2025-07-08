@@ -11,6 +11,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Plus, Music, LogOut, Save, User, Library } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { format, formatDistanceToNow, isToday, isYesterday, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -39,13 +45,34 @@ export const MySongsDropdown: React.FC<MySongsDropdownProps> = ({
 
   if (!user) {
     return (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onSaveClick}
-      >
-        Iniciar Sesión
-      </Button>
+      <TooltipProvider>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground hidden md:inline">
+            Guarda tus canciones
+          </span>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onSaveClick}
+                className="gap-1"
+              >
+                <Save className="h-4 w-4" />
+                Iniciar Sesión
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="text-sm">Inicia sesión para:</p>
+              <ul className="text-sm mt-1 space-y-1">
+                <li>• Guardar tus canciones</li>
+                <li>• Crear tu biblioteca personal</li>
+                <li>• Acceder desde cualquier dispositivo</li>
+              </ul>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
     );
   }
 
@@ -76,7 +103,18 @@ export const MySongsDropdown: React.FC<MySongsDropdownProps> = ({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="gap-2">
-          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+          {user.photoURL ? (
+            <img 
+              src={user.photoURL} 
+              alt={user.displayName || user.email || 'Usuario'}
+              className="w-8 h-8 rounded-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+          ) : null}
+          <div className={`flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-semibold ${user.photoURL ? 'hidden' : ''}`}>
             {userInitials}
           </div>
           <span className="hidden sm:inline-block">Mis Guías</span>

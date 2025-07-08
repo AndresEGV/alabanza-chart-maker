@@ -36,7 +36,7 @@ const Index = () => {
   } = useSongStore();
   
   const [songData, setSongData] = useState<SongData>(getSampleSongData());
-  const [layout, setLayout] = useState<LayoutType>(LayoutType.TWO_COLUMN);
+  const [layout, setLayout] = useState<LayoutType | null>(null);
   const [isEditing, setIsEditing] = useState(true);
   const [showChords, setShowChords] = useState<boolean>(true);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -329,27 +329,72 @@ const Index = () => {
       </style>
       <div className="container max-w-7xl mx-auto px-4 print:p-0">
         <div className="mb-8 print:hidden">
-          <div className="absolute top-4 right-4 flex items-center gap-2">
-            <MySongsDropdown
-              onNewSong={handleNewSong}
-              onLoadSong={handleLoadSong}
-              onSaveClick={() => setShowLoginModal(true)}
-              onOpenLibrary={() => setShowLibraryModal(true)}
-            />
-            <ThemeToggle />
+          {/* Mobile Header */}
+          <div className="sm:hidden">
+            <div className="flex justify-between items-start gap-3 mb-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl font-bold leading-tight">Alabanza Chart Maker</h1>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  Guías de alabanza profesionales
+                </p>
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <MySongsDropdown
+                  onNewSong={handleNewSong}
+                  onLoadSong={handleLoadSong}
+                  onSaveClick={() => setShowLoginModal(true)}
+                  onOpenLibrary={() => setShowLibraryModal(true)}
+                />
+                <ThemeToggle />
+              </div>
+            </div>
           </div>
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-2">Alabanza Chart Maker</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400">
-              Crea y personaliza guías de alabanza profesionales
-            </p>
+          
+          {/* Tablet Header */}
+          <div className="hidden sm:block lg:hidden">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h1 className="text-3xl font-bold">Alabanza Chart Maker</h1>
+                <p className="text-base text-gray-600 dark:text-gray-400 mt-1">
+                  Crea y personaliza guías de alabanza profesionales
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <MySongsDropdown
+                  onNewSong={handleNewSong}
+                  onLoadSong={handleLoadSong}
+                  onSaveClick={() => setShowLoginModal(true)}
+                  onOpenLibrary={() => setShowLibraryModal(true)}
+                />
+                <ThemeToggle />
+              </div>
+            </div>
+          </div>
+          
+          {/* Desktop Header */}
+          <div className="hidden lg:block relative">
+            <div className="absolute top-0 right-0 flex items-center gap-2">
+              <MySongsDropdown
+                onNewSong={handleNewSong}
+                onLoadSong={handleLoadSong}
+                onSaveClick={() => setShowLoginModal(true)}
+                onOpenLibrary={() => setShowLibraryModal(true)}
+              />
+              <ThemeToggle />
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2">Alabanza Chart Maker</h1>
+              <p className="text-xl text-gray-600 dark:text-gray-400">
+                Crea y personaliza guías de alabanza profesionales
+              </p>
+            </div>
           </div>
         </div>
 
         {isEditing ? (
           <div className="print:hidden">
             <div className="mb-4 flex justify-between items-center">
-              <h2 className="text-2xl font-semibold">Editor de Guía</h2>
+              <h2 className="text-xl sm:text-2xl font-semibold">Editor de Guía</h2>
               <div className="flex gap-2">
               </div>
             </div>
@@ -412,7 +457,7 @@ const Index = () => {
               <SongChart 
                 key="song-chart" 
                 song={songData} 
-                layout={layout} 
+                layout={layout || LayoutType.TWO_COLUMN} 
                 showChords={showChords} 
               />
             </div>
