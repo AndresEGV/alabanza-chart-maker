@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
+  <!-- White background for Apple devices -->
+  <rect width="180" height="180" fill="white"/>
+  
+  <!-- Musical note icon -->
+  <g fill="#71717A" stroke="#71717A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" transform="translate(30, 30)">
+    <!-- Vertical line -->
+    <path d="M45 20 L45 100" fill="none"/>
+    <!-- Top beam -->
+    <path d="M45 20 L105 5 L105 85" fill="none"/>
+    <!-- Left note -->
+    <circle cx="35" cy="100" r="15" fill="#71717A" stroke="none"/>
+    <!-- Right note -->
+    <circle cx="95" cy="85" r="15" fill="#71717A" stroke="none"/>
+  </g>
+</svg>

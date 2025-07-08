@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <!-- Musical note icon -->
+  <g fill="#71717A" stroke="#71717A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Vertical line -->
+    <path d="M45 25 L45 85" fill="none"/>
+    <!-- Top beam -->
+    <path d="M45 25 L90 15 L90 75" fill="none"/>
+    <!-- Left note -->
+    <circle cx="35" cy="85" r="12" fill="#71717A" stroke="none"/>
+    <!-- Right note -->
+    <circle cx="80" cy="75" r="12" fill="#71717A" stroke="none"/>
+  </g>
+</svg>
