@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Music, Calendar, Clock, Loader2, Trash2, Hash, Layers } from 'lucide-react';
+import { Search, Music, Calendar, Clock, Loader2, Trash2, Star } from 'lucide-react';
 import { format, isToday, isYesterday, isThisWeek, isThisMonth } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { SavedSong } from '@/stores/useSongStore';
@@ -18,6 +18,7 @@ interface SongLibraryModalProps {
   songs: SavedSong[];
   onSelectSong: (songId: string) => void;
   onDeleteSong?: (songId: string) => void;
+  onToggleFavorite?: (songId: string) => void;
   currentSongId?: string;
 }
 
@@ -31,6 +32,7 @@ export const SongLibraryModal: React.FC<SongLibraryModalProps> = ({
   songs,
   onSelectSong,
   onDeleteSong,
+  onToggleFavorite,
   currentSongId,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,18 +42,21 @@ export const SongLibraryModal: React.FC<SongLibraryModalProps> = ({
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Calcular el tamaño/complejidad de una canción
-  const getSongSize = (song: SavedSong) => {
-    const sectionCount = song.sectionSequence.length;
-    let totalLines = 0;
+  // Verificar si una canción es favorita
+  const isFavorite = (song: SavedSong) => {
+    return song.tags?.includes('_favorite') || false;
+  };
+
+  // Obtener indicador visual de tempo
+  const getTempoIndicator = (tempo: string | undefined) => {
+    if (!tempo) return null;
     
-    Object.values(song.sections).forEach(section => {
-      totalLines += section.lines.length;
-    });
+    const bpm = parseInt(tempo);
+    if (isNaN(bpm)) return null;
     
-    if (totalLines <= 20 || sectionCount <= 3) return { label: 'Corta', color: 'text-green-600 dark:text-green-400' };
-    if (totalLines <= 40 || sectionCount <= 5) return { label: 'Media', color: 'text-yellow-600 dark:text-yellow-400' };
-    return { label: 'Larga', color: 'text-orange-600 dark:text-orange-400' };
+    if (bpm < 80) return { icon: '♩', label: 'Lento', color: 'text-blue-600 dark:text-blue-400' };
+    if (bpm < 120) return { icon: '♩♩', label: 'Moderado', color: 'text-green-600 dark:text-green-400' };
+    return { icon: '♩♩♩', label: 'Rápido', color: 'text-orange-600 dark:text-orange-400' };
   };
 
   // Auto-focus search input when modal opens
@@ -74,6 +79,10 @@ export const SongLibraryModal: React.FC<SongLibraryModalProps> = ({
       
       if (selectedFilter === 'recent') {
         return isThisWeek(song.updatedAt);
+      }
+      
+      if (selectedFilter === 'favorites') {
+        return isFavorite(song);
       }
       
       return true;
@@ -183,6 +192,14 @@ export const SongLibraryModal: React.FC<SongLibraryModalProps> = ({
               <Clock className="mr-2 h-3 w-3" />
               Recientes
             </Button>
+            <Button
+              variant={selectedFilter === 'favorites' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setSelectedFilter('favorites')}
+            >
+              <Star className="mr-2 h-3 w-3" />
+              Favoritas
+            </Button>
           </div>
         </div>
 
@@ -201,7 +218,7 @@ export const SongLibraryModal: React.FC<SongLibraryModalProps> = ({
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {groupSongs.map((song) => {
-                    const songSize = getSongSize(song);
+                    const tempoInfo = getTempoIndicator(song.tempo);
                     return (
                       <button
                         key={song.id}
@@ -214,10 +231,6 @@ export const SongLibraryModal: React.FC<SongLibraryModalProps> = ({
                         `}
                         disabled={loadingSongId !== null}
                       >
-                      {/* Indicador de tamaño */}
-                      <div className={`absolute top-2 right-2 text-[10px] font-medium px-1.5 py-0.5 rounded ${songSize.color} bg-gray-100 dark:bg-gray-800`}>
-                        {songSize.label}
-                      </div>
                       
                       <div className="flex items-start gap-3">
                         {loadingSongId === song.id ? (
@@ -226,62 +239,85 @@ export const SongLibraryModal: React.FC<SongLibraryModalProps> = ({
                           <Music className="h-8 w-8 text-muted-foreground flex-shrink-0 mt-1" />
                         )}
                         <div className="flex-1 min-w-0">
-                          <div className="space-y-0.5">
-                            <h4 className="font-medium truncate text-base">{song.title}</h4>
-                            {song.artist && (
-                              <p className="text-sm text-muted-foreground truncate">{song.artist}</p>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-medium truncate text-base">{song.title}</h4>
+                              {song.artist && (
+                                <p className="text-sm text-muted-foreground truncate">{song.artist}</p>
+                              )}
+                            </div>
+                            {onToggleFavorite && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onToggleFavorite(song.id);
+                                }}
+                                className="ml-2 p-1 hover:scale-110 transition-transform"
+                              >
+                                <Star 
+                                  className={`h-4 w-4 ${
+                                    isFavorite(song) 
+                                      ? 'fill-yellow-500 text-yellow-500' 
+                                      : 'text-gray-300 hover:text-gray-500'
+                                  }`}
+                                />
+                              </button>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 mt-3">
-                            {song.key && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
-                                {song.key}
-                              </span>
-                            )}
-                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-muted text-muted-foreground">
-                              {song.sectionSequence.length} partes
-                            </span>
-                            <span className="ml-auto text-xs text-muted-foreground">
-                              {format(song.updatedAt, 'dd MMM', { locale: es })}
-                            </span>
+                          
+                          {/* Info simplificada */}
+                          <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-3">
+                              {song.key && (
+                                <span className="font-medium text-foreground">{song.key}</span>
+                              )}
+                              {tempoInfo && (
+                                <span className={`${tempoInfo.color}`} title={`${song.tempo} BPM`}>
+                                  {tempoInfo.icon}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>{format(song.updatedAt, 'dd MMM', { locale: es })}</span>
+                              {onDeleteSong && (
+                                <>
+                                  {confirmDeleteId === song.id ? (
+                                    <div className="flex gap-1">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-6 px-2 text-xs"
+                                        onClick={handleCancelDelete}
+                                      >
+                                        Cancelar
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                                        onClick={(e) => handleConfirmDelete(e, song.id)}
+                                        disabled={deletingSongId === song.id}
+                                      >
+                                        {deletingSongId === song.id ? (
+                                          <Loader2 className="h-3 w-3 animate-spin" />
+                                        ) : (
+                                          'Eliminar'
+                                        )}
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={(e) => handleDeleteClick(e, song.id)}
+                                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-50 dark:hover:bg-red-950 rounded"
+                                    >
+                                      <Trash2 className="h-3 w-3 text-red-600 dark:text-red-400" />
+                                    </button>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
-                        {onDeleteSong && (
-                          <div className="flex items-start">
-                            {confirmDeleteId === song.id ? (
-                              <div className="flex gap-1">
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={(e) => handleConfirmDelete(e, song.id)}
-                                  disabled={deletingSongId === song.id}
-                                >
-                                  {deletingSongId === song.id ? (
-                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                  ) : (
-                                    'Eliminar'
-                                  )}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={handleCancelDelete}
-                                >
-                                  Cancelar
-                                </Button>
-                              </div>
-                            ) : (
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={(e) => handleDeleteClick(e, song.id)}
-                                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                        )}
                       </div>
                     </button>
                     );

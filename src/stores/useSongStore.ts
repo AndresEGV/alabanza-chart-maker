@@ -46,6 +46,7 @@ interface SongState {
   setAutoSave: (enabled: boolean) => void;
   setHasUnsavedChanges: (hasChanges: boolean) => void;
   setError: (error: string | null) => void;
+  toggleFavorite: (songId: string) => Promise<void>;
 }
 
 export const useSongStore = create<SongState>((set, get) => ({
@@ -61,6 +62,46 @@ export const useSongStore = create<SongState>((set, get) => ({
   setAutoSave: (enabled) => set({ autoSaveEnabled: enabled }),
   setHasUnsavedChanges: (hasChanges) => set({ hasUnsavedChanges: hasChanges }),
   setError: (error) => set({ error }),
+
+  toggleFavorite: async (songId) => {
+    set({ loading: true, error: null });
+    try {
+      const songRef = doc(db, 'songs', songId);
+      const songDoc = await getDoc(songRef);
+      
+      if (!songDoc.exists()) {
+        throw new Error('La canción no existe');
+      }
+      
+      const currentTags = songDoc.data().tags || [];
+      const isFavorite = currentTags.includes('_favorite');
+      
+      const updatedTags = isFavorite
+        ? currentTags.filter((tag: string) => tag !== '_favorite')
+        : [...currentTags, '_favorite'];
+      
+      await updateDoc(songRef, {
+        tags: updatedTags,
+        updatedAt: serverTimestamp(),
+      });
+      
+      // Actualizar el estado local
+      set((state) => ({
+        songs: state.songs.map((song) =>
+          song.id === songId
+            ? { ...song, tags: updatedTags, updatedAt: new Date() }
+            : song
+        ),
+        currentSong: state.currentSong?.id === songId
+          ? { ...state.currentSong, tags: updatedTags, updatedAt: new Date() }
+          : state.currentSong,
+        loading: false,
+      }));
+    } catch (error: any) {
+      set({ error: error.message, loading: false });
+      throw error;
+    }
+  },
 
   fetchUserSongs: async (userId) => {
     set({ loading: true, error: null });

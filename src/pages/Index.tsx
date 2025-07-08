@@ -31,6 +31,7 @@ const Index = () => {
     updateSong,
     setCurrentSong,
     deleteSong,
+    toggleFavorite,
     songs 
   } = useSongStore();
   
@@ -433,6 +434,24 @@ const Index = () => {
           songs={songs}
           onSelectSong={handleLoadSong}
           onDeleteSong={handleDeleteSong}
+          onToggleFavorite={async (songId) => {
+            try {
+              await toggleFavorite(songId);
+              const song = songs.find(s => s.id === songId);
+              const isFavorite = song?.tags?.includes('_favorite');
+              
+              toast({
+                title: isFavorite ? "Eliminado de favoritos" : "Agregado a favoritos",
+                description: `"${song?.title}" ${isFavorite ? 'ya no es' : 'ahora es'} una canción favorita`,
+              });
+            } catch (error) {
+              toast({
+                title: "Error",
+                description: "No se pudo actualizar el estado de favorito",
+                variant: "destructive",
+              });
+            }
+          }}
           currentSongId={currentSong?.id}
         />
       )}
